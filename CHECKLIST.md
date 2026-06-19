@@ -1,0 +1,89 @@
+# ✅ Seshat — Build Checklist
+
+Per-phase, task-level tracking. Check items off as they land. Each phase must be **fully green** (tests + docs + demo) before the next starts. See **[ROADMAP.md](ROADMAP.md)** for themes and acceptance criteria.
+
+> Legend: `[ ]` todo · `[~]` in progress · `[x]` done
+
+---
+
+## Phase 0 — 🏛️ Foundation & Schema
+- [ ] Repo scaffold (`src/`, `tests/`, `patterns/`, `docs/`)
+- [ ] `LICENSE` (MIT), `CLAUDE.md`, `.gitignore`, `pyproject.toml`
+- [ ] Offline CI workflow (lint + unit tests, no network)
+- [ ] SQLite schema v1 (`chains`, `contracts`, `sources`, `patterns`, `scans`, `findings`)
+- [ ] Migration system + schema-version table
+- [ ] Core dataclasses + thin DB access layer
+- [ ] `seshat init` command (idempotent)
+- [ ] Schema test enforces migrations apply cleanly
+
+## Phase 1 — 📥 Ingestion Engine
+- [ ] Importer: local `.sol` files
+- [ ] Importer: Solidity Standard-JSON
+- [ ] Importer: Foundry / Hardhat project trees
+- [ ] Importer: address + explorer fetch (cached, opt-in online)
+- [ ] Importer: raw bytecode (mark unverified)
+- [ ] Importer: MaatEye registry
+- [ ] Normalizer: flatten Standard-JSON incl. `{{…}}`
+- [ ] Normalizer: drop dependency files (OZ, node_modules, lib/, …)
+- [ ] Normalizer: strip comments/strings, preserve line numbers
+- [ ] Content-addressed dedup (no duplicate rows on re-ingest)
+- [ ] Tests for every importer + normalizer
+
+## Phase 2 — 🎯 Pattern Engine (100+)
+- [ ] Pattern YAML schema (id/name/severity/category/confidence/SWC/CWE/detectors)
+- [ ] Matcher: regex
+- [ ] Matcher: function-signature
+- [ ] Matcher: lightweight AST / structural
+- [ ] Matcher: semantic heuristic
+- [ ] Confidence threshold in core
+- [ ] Dedup per `(pattern, line)`
+- [ ] Pattern SDK + validator
+- [ ] Labeled fixture harness (TP + FP per pattern)
+- [ ] Migrate MaatEye's 50 patterns (with their fixes baked in)
+- [ ] Expand to 100+ (full SWC registry + DeFi classes)
+- [ ] Precision baseline: clean ERC-20 ⇒ 0 critical
+
+## Phase 3 — 🗄️ Local Database & Query
+- [ ] Persist scans + findings with history
+- [ ] `seshat query` (raw SQL)
+- [ ] Canned queries (top patterns, by severity, by chain)
+- [ ] Full-text search over source
+- [ ] `seshat diff A B` (new / fixed / regressed)
+- [ ] Incremental re-scan (only changed contracts)
+- [ ] Tests for query, diff, incremental
+
+## Phase 4 — 📤 Reporting & UX
+- [ ] Exporter: JSON
+- [ ] Exporter: CSV
+- [ ] Exporter: SARIF (validates; renders in VS Code)
+- [ ] Exporter: Markdown
+- [ ] Exporter: self-contained offline HTML report
+- [ ] Pretty CLI + optional TUI triage view
+- [ ] Review-flag framing surfaced in every output
+
+## Phase 5 — ⚡ Rust Performance Core
+- [ ] Rust engine reading the same pattern format
+- [ ] Parity test: identical findings vs Python on baseline corpus
+- [ ] Parallel scanning + large-DB handling
+- [ ] Directory partitioning for big imports (80-char safety)
+- [ ] Benchmarks documented
+
+## Phase 6 — 📦 Distribution
+- [ ] PyPI package (`pipx install seshat`)
+- [ ] crates.io package
+- [ ] Standalone binaries (Linux/macOS/Windows)
+- [ ] Offline pattern bundle shipped in package
+- [ ] Clean-machine, network-disabled smoke test
+- [ ] VHS terminal demo GIF in README
+- [ ] Docs site
+
+## Phase 7 — 🧠 Ecosystem & Polish
+- [ ] Plugin system for custom patterns
+- [ ] IDE integration (SARIF / LSP)
+- [ ] Interop: MaatEye / Slither import-export
+- [ ] Community pattern pack
+- [ ] `v1.0` release — "100% perfection"
+
+---
+
+<div align="center"><i>📜 One checkbox at a time, the archive is written. 📜</i></div>
