@@ -16,18 +16,18 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] `seshat init` command (idempotent)
 - [x] Schema test enforces migrations apply cleanly
 
-## Phase 1 — 📥 Ingestion Engine
-- [ ] Importer: local `.sol` files
-- [ ] Importer: Solidity Standard-JSON
-- [ ] Importer: Foundry / Hardhat project trees
-- [ ] Importer: address + explorer fetch (cached, opt-in online)
-- [ ] Importer: raw bytecode (mark unverified)
-- [ ] Importer: MaatEye registry
-- [ ] Normalizer: flatten Standard-JSON incl. `{{…}}`
-- [ ] Normalizer: drop dependency files (OZ, node_modules, lib/, …)
-- [ ] Normalizer: strip comments/strings, preserve line numbers
-- [ ] Content-addressed dedup (no duplicate rows on re-ingest)
-- [ ] Tests for every importer + normalizer
+## Phase 1 — 📥 Ingestion Engine ✅
+- [x] Importer: local `.sol` files
+- [x] Importer: Solidity Standard-JSON
+- [x] Importer: Foundry / Hardhat project trees
+- [x] Importer: address + explorer fetch (cached, opt-in online)
+- [x] Importer: raw bytecode (mark unverified)
+- [x] Importer: MaatEye registry
+- [x] Normalizer: flatten Standard-JSON incl. `{{…}}`
+- [x] Normalizer: drop dependency files (OZ, node_modules, lib/, …)
+- [x] Normalizer: strip comments/strings, preserve line numbers
+- [x] Content-addressed dedup (no duplicate rows on re-ingest)
+- [x] Tests for every importer + normalizer
 
 ## Phase 2 — 🎯 Pattern Engine (100+)
 - [ ] Pattern YAML schema (id/name/severity/category/confidence/SWC/CWE/detectors)

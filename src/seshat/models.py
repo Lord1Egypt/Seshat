@@ -11,14 +11,14 @@ import sqlite3
 from dataclasses import dataclass
 
 
-@dataclass(slots=True)
+@dataclass
 class Chain:
     key: str
     name: str | None = None
     chain_id: int | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class Contract:
     id: int | None = None
     chain_key: str | None = None
@@ -30,7 +30,7 @@ class Contract:
     origin: str | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class Source:
     id: int | None = None
     contract_id: int | None = None
@@ -40,7 +40,7 @@ class Source:
     lines: int | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class Pattern:
     id: str  # "P001", ...
     name: str | None = None
@@ -52,7 +52,7 @@ class Pattern:
     version: str | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class Scan:
     id: int | None = None
     started_at: str | None = None
@@ -62,7 +62,7 @@ class Scan:
     contracts_scanned: int | None = None
 
 
-@dataclass(slots=True)
+@dataclass
 class Finding:
     id: int | None = None
     scan_id: int | None = None
