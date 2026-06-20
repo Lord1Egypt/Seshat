@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seshat-scanner"
-version = "0.1.0"
+version = "1.0.0"
 description = "Offline-first, downloadable smart-contract vulnerability scanner + local SQLite archive."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -12,7 +12,7 @@ requires-python = ">=3.9"
 authors = [{ name = "Lord1Egypt" }]
 keywords = ["solidity", "security", "scanner", "evm", "static-analysis", "offline", "sqlite"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",

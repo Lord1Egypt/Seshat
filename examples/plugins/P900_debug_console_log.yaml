@@ -1,0 +1,23 @@
+# Example community/plugin pattern. Drop a file like this into a directory and
+# load it with `seshat scan --plugins ./examples/plugins` (or put it in
+# ~/.config/seshat/patterns/ to auto-load) — no core changes needed.
+#
+# Plugin ids should not collide with the bundled catalog (P001–P178); use a high
+# number like P900+.
+id: P900
+name: Debug console.log Left In
+severity: low
+category: BUSINESS_LOGIC
+confidence: 0.6
+cwe: CWE-489
+detectors:
+  - type: regex
+    pattern: 'console\.log\s*\('
+    confidence: 0.6
+    description: 'Hardhat console.log left in production code'
+    recommendation: 'Remove console.log / import "hardhat/console.sol" before deploying.'
+tests:
+  positive:
+    - 'contract C { function f() public { console.log("debug", msg.sender); } }'
+  negative:
+    - 'contract C { uint256 private x; function f() external view returns (uint256) { return x; } }'

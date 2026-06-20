@@ -7,6 +7,7 @@
 *She who measures, records, and remembers — an **offline-first** smart-contract vulnerability **archive & scanner** that builds a local database you own.*
 
 <p align="center">
+  <img src="https://img.shields.io/badge/version-1.0-44cc44?style=for-the-badge&labelColor=1a1a2e" alt="v1.0"/>
   <img src="https://img.shields.io/badge/runs-100%25%20local-00d4aa?style=for-the-badge&labelColor=1a1a2e" alt="Local"/>
   <img src="https://img.shields.io/badge/patterns-103-gold?style=for-the-badge&labelColor=1a1a2e" alt="Patterns"/>
   <img src="https://img.shields.io/badge/dependencies-zero-2ea043?style=for-the-badge&labelColor=1a1a2e" alt="Zero deps"/>
@@ -145,7 +146,7 @@ Seshat ships in eight focused phases. Full detail + acceptance criteria in **[RO
 | **6** | 📦 Distribution | PyPI · binaries · demo |
 | **7** | 🧠 Ecosystem | Plugins · IDE/SARIF · interop |
 
-**Current status:** ✅ Phases **0–4 shipped** (schema · ingestion · 103-pattern engine · query/diff/incremental · reporting) and 📦 **Phase 6 distribution** in progress. Phase 5 (Rust) is optional/perf-only.
+**Current status:** 🎉 **v1.0** — Phases **0–4, 6, 7 shipped** (schema · ingestion · 103-pattern engine · query/diff/incremental · reporting · distribution · plugins/interop). Phase 5 (Rust perf core) is optional and the only deferred item.
 
 ---
 

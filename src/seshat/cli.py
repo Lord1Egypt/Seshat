@@ -13,13 +13,14 @@ import sqlite3
 import sys
 from pathlib import Path
 
-from . import __version__, engine, ingest
+from . import __version__, engine, ingest, interop
 from . import patterns as patterns_mod
 from . import query as query_mod
 from . import report as report_mod
 from .db import init_db
 from .diff import diff_scans
 from .explorer import ExplorerError
+from .patterns import PatternError
 from .scan import run_scan
 from .store import IngestResult
 
@@ -108,12 +109,21 @@ def _cmd_ingest(args: argparse.Namespace) -> int:
 
 
 def _load_catalog(args: argparse.Namespace):
-    catalog = args.patterns or str(patterns_mod.default_catalog_dir())
-    return patterns_mod.load_patterns(catalog), catalog
+    base = args.patterns or None
+    extra = getattr(args, "plugins", None) or []
+    pats = patterns_mod.load_catalog(extra_dirs=extra, base_dir=base)
+    label = args.patterns or str(patterns_mod.default_catalog_dir())
+    if extra:
+        label += " (+" + ", ".join(extra) + ")"
+    return pats, label
 
 
 def _cmd_scan(args: argparse.Namespace) -> int:
-    pats, catalog = _load_catalog(args)
+    try:
+        pats, catalog = _load_catalog(args)
+    except PatternError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     if not pats:
         print(f"error: no patterns found in {catalog}", file=sys.stderr)
         return 1
@@ -259,6 +269,23 @@ def _cmd_report(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_import(args: argparse.Namespace) -> int:
+    conn, _, _ = init_db(args.db)
+    try:
+        scan_id = interop.IMPORTERS[args.format](conn, args.file)
+        n = conn.execute(
+            "SELECT COUNT(*) FROM findings WHERE scan_id = ?", (scan_id,)
+        ).fetchone()[0]
+    except (OSError, ValueError, KeyError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        conn.close()
+        return 1
+    finally:
+        conn.close()
+    print(f"📨 imported {n} findings from {args.format} → scan #{scan_id} in {args.db}")
+    return 0
+
+
 def _cmd_diff(args: argparse.Namespace) -> int:
     try:
         conn = query_mod.connect_ro(args.db)
@@ -281,7 +308,11 @@ def _cmd_diff(args: argparse.Namespace) -> int:
 
 
 def _cmd_patterns(args: argparse.Namespace) -> int:
-    pats, catalog = _load_catalog(args)
+    try:
+        pats, catalog = _load_catalog(args)
+    except PatternError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
     if args.validate:
         problems: list[str] = []
         for p in pats:
@@ -359,6 +390,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--incremental", action="store_true",
         help="reuse results for contracts unchanged since the last scan",
     )
+    p_scan.add_argument(
+        "--plugins", action="append", metavar="DIR",
+        help="extra pattern directory to load alongside the catalog (repeatable)",
+    )
     p_scan.set_defaults(func=_cmd_scan)
 
     p_q = sub.add_parser("query", help="run raw SQL or a canned query (read-only)")
@@ -388,10 +423,20 @@ def build_parser() -> argparse.ArgumentParser:
     p_pat = sub.add_parser("patterns", help="list or validate the pattern catalog")
     p_pat.add_argument("--patterns", help="pattern catalog dir (default: bundled)")
     p_pat.add_argument(
+        "--plugins", action="append", metavar="DIR",
+        help="extra pattern directory to include (repeatable)",
+    )
+    p_pat.add_argument(
         "--validate", action="store_true",
         help="validate every pattern and run its fixtures (non-zero exit on failure)",
     )
     p_pat.set_defaults(func=_cmd_patterns)
+
+    p_imp = sub.add_parser("import", help="import findings from another tool (SARIF/Slither)")
+    p_imp.add_argument("file", help="path to a SARIF or Slither JSON file")
+    p_imp.add_argument("--format", required=True, choices=["sarif", "slither"])
+    p_imp.add_argument("--db", default="seshat.db", help="archive path")
+    p_imp.set_defaults(func=_cmd_import)
 
     p_r = sub.add_parser("report", help="render a scan as table/json/csv/sarif/md/html")
     p_r.add_argument("--db", default="seshat.db", help="archive path")

@@ -77,12 +77,12 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Terminal demo in README (animated SVG; VHS `.tape` committed for GIF)
 - [ ] Docs site (docs/ markdown present; hosted site optional)
 
-## Phase 7 — 🧠 Ecosystem & Polish
-- [ ] Plugin system for custom patterns
-- [ ] IDE integration (SARIF / LSP)
-- [ ] Interop: MaatEye / Slither import-export
-- [ ] Community pattern pack
-- [ ] `v1.0` release — "100% perfection"
+## Phase 7 — 🧠 Ecosystem & Polish ✅
+- [x] Plugin system for custom patterns (`--plugins DIR`, `$SESHAT_PLUGINS`, user dir; dup-id guard)
+- [x] IDE integration (SARIF 2.1.0 export → VS Code / code scanning)
+- [x] Interop: SARIF round-trip + Slither import (MaatEye registry import in Phase 1)
+- [x] Community pattern pack (`examples/plugins/` + docs/PLUGINS.md)
+- [x] `v1.0` — stable schema, 103 patterns, 5 exporters, distributable binaries, demo
 
 ---
 
