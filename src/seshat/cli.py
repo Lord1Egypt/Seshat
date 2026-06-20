@@ -16,6 +16,7 @@ from pathlib import Path
 from . import __version__, engine, ingest
 from . import patterns as patterns_mod
 from . import query as query_mod
+from . import report as report_mod
 from .db import init_db
 from .diff import diff_scans
 from .explorer import ExplorerError
@@ -205,6 +206,59 @@ def _cmd_search(args: argparse.Namespace) -> int:
     return 0
 
 
+_EXT_FORMAT = {
+    ".json": "json", ".csv": "csv", ".sarif": "sarif",
+    ".md": "md", ".markdown": "md", ".html": "html", ".htm": "html",
+}
+
+
+def _recommendations() -> dict[str, str]:
+    """Best-effort pattern_id → recommendation map from the bundled catalog."""
+    recs: dict[str, str] = {}
+    try:
+        for p in patterns_mod.load_patterns(patterns_mod.default_catalog_dir()):
+            for d in p.detectors:
+                if d.recommendation:
+                    recs[p.id] = d.recommendation
+                    break
+    except OSError:
+        pass
+    return recs
+
+
+def _cmd_report(args: argparse.Namespace) -> int:
+    fmt = args.format
+    if fmt is None:
+        fmt = _EXT_FORMAT.get(Path(args.output).suffix.lower(), "md") if args.output else "table"
+    try:
+        conn = query_mod.connect_ro(args.db)
+    except sqlite3.OperationalError as exc:
+        print(f"error: cannot open {args.db}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        report = report_mod.build_report(
+            conn, args.scan, recommendations=_recommendations(),
+            min_severity=args.min_severity,
+        )
+    except ValueError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    finally:
+        conn.close()
+
+    if fmt == "table":
+        text = report_mod.to_table(report, color=sys.stdout.isatty() and not args.output)
+    else:
+        text = report_mod.EXPORTERS[fmt](report)
+
+    if args.output:
+        Path(args.output).write_text(text, encoding="utf-8")
+        print(f"📤 wrote {fmt} report ({report.total_findings} flags) → {args.output}")
+    else:
+        print(text, end="" if text.endswith("\n") else "\n")
+    return 0
+
+
 def _cmd_diff(args: argparse.Namespace) -> int:
     try:
         conn = query_mod.connect_ro(args.db)
@@ -338,6 +392,20 @@ def build_parser() -> argparse.ArgumentParser:
         help="validate every pattern and run its fixtures (non-zero exit on failure)",
     )
     p_pat.set_defaults(func=_cmd_patterns)
+
+    p_r = sub.add_parser("report", help="render a scan as table/json/csv/sarif/md/html")
+    p_r.add_argument("--db", default="seshat.db", help="archive path")
+    p_r.add_argument(
+        "--format", choices=["table", "json", "csv", "sarif", "md", "html"],
+        help="output format (default: inferred from -o, else table)",
+    )
+    p_r.add_argument("-o", "--output", help="write to a file (format inferred from extension)")
+    p_r.add_argument("--scan", type=int, help="scan id (default: latest)")
+    p_r.add_argument(
+        "--min-severity", choices=list(report_mod.SEVERITY_ORDER),
+        help="only include findings at or above this severity",
+    )
+    p_r.set_defaults(func=_cmd_report)
 
     return parser
 
