@@ -80,7 +80,7 @@ The first 50 patterns are migrated from **MaatEye** *with their corrections alre
 
 ## Implementation status (Phase 2 — shipped)
 
-- **103 patterns** ship in `patterns/catalog/` across all 12 categories; each is a self-contained YAML file with **inline** TP/FP fixtures.
+- **106 patterns** ship in `patterns/catalog/` across all 12 categories; each is a self-contained YAML file with **inline** TP/FP fixtures.
 - **Zero dependencies.** YAML is parsed by a stdlib `miniyaml` subset loader (regex lives in single-quoted scalars so backslashes stay literal). No PyYAML.
 - **One unified matcher** backs the four declared kinds: `scope: file` (per-line) or `scope: function` (brace-balanced body, including `receive`/`fallback`), optional `multiline`, and `requires`/`forbids` lists that compose detectors into `function_signature`/`ast`/`semantic` checks without a real compiler.
 - **Engine contracts:** sub-threshold detectors are dropped; findings are deduped per `(pattern, line)`, highest confidence wins.

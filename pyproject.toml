@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "seshat-scanner"
-version = "1.0.0"
+version = "1.1.0"
 description = "Offline-first, downloadable smart-contract vulnerability scanner + local SQLite archive."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -36,7 +36,7 @@ seshat = "seshat.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-# Ship the 103-pattern catalog inside the wheel so scanning works fully offline
+# Ship the 106-pattern catalog inside the wheel so scanning works fully offline
 # after `pip install` / `pipx install` — no repo, no network needed.
 seshat = ["catalog/*.yaml"]
 

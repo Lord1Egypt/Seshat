@@ -4,4 +4,4 @@ The scribe who keeps the record. Sibling to MaatEye (the cloud scanner); Seshat
 is the local archive that runs 100% offline. See docs/ARCHITECTURE.md.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
