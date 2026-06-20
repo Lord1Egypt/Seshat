@@ -40,7 +40,7 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Pattern SDK + validator (`seshat patterns --validate`)
 - [x] Labeled fixture harness (inline TP + FP per pattern)
 - [x] Migrate MaatEye's 50 patterns (with their fixes baked in)
-- [x] Expand to 100+ (103 patterns across all 12 categories)
+- [x] Expand to 100+ (106 patterns across all 12 categories)
 - [x] Precision baseline: clean ERC-20 ⇒ 0 critical
 
 ## Phase 3 — 🗄️ Local Database & Query ✅
@@ -72,7 +72,7 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] PyPI package (`pipx install seshat-scanner`) — buildable wheel/sdist (publish = maintainer step)
 - [ ] crates.io package (depends on Phase 5 Rust core — deferred)
 - [x] Standalone binaries (Linux/macOS/Windows) — release workflow builds on tag
-- [x] Offline pattern bundle shipped in package (103 patterns as package-data)
+- [x] Offline pattern bundle shipped in package (106 patterns as package-data)
 - [x] Clean-machine, network-disabled smoke test (offline wheel install + scan verified)
 - [x] Terminal demo in README (animated SVG; VHS `.tape` committed for GIF)
 - [ ] Docs site (docs/ markdown present; hosted site optional)
@@ -82,7 +82,7 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] IDE integration (SARIF 2.1.0 export → VS Code / code scanning)
 - [x] Interop: SARIF round-trip + Slither import (MaatEye registry import in Phase 1)
 - [x] Community pattern pack (`examples/plugins/` + docs/PLUGINS.md)
-- [x] `v1.0` — stable schema, 103 patterns, 5 exporters, distributable binaries, demo
+- [x] `v1.0` — stable schema, 106 patterns, 5 exporters, distributable binaries, demo
 
 ---
 

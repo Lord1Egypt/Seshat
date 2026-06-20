@@ -298,6 +298,30 @@ add(P("P040", "UUPS Upgrade Without Guard", "high", "PROXY_UPGRADEABLE", "SWC-10
       ["contract C { address impl; function upgradeTo(address n) public { impl = n; } }"],
       ["contract C { address impl; function upgradeTo(address n) public onlyOwner { impl = n; } }", CLEAN]))
 
+add(P("P046", "Unprotected diamondCut", "critical", "PROXY_UPGRADEABLE", "SWC-105", "CWE-284", 0.7,
+      [det(r"function\s+\w*(diamondCut|facetCut|replaceFacet|addFacet|removeFacet|setFacet|registerFacet)\w*\s*\(",
+           0.7, type="function_signature", scope="function", requires=[r"\b(public|external)\b"],
+           forbids=GUARDS + ["enforceIsContractOwner", r"LibDiamond\.enforce"],
+           desc="EIP-2535 facet management without an owner/role guard")],
+      ["contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external { f[s[0]] = a; } }"],
+      ["contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external onlyOwner { f[s[0]] = a; } }",
+       "contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external { LibDiamond.enforceIsContractOwner(); f[s[0]] = a; } }", CLEAN]))
+
+add(P("P047", "Unprotected Implementation Setter", "critical", "PROXY_UPGRADEABLE", "SWC-105", "CWE-284", 0.7,
+      [det(r"function\s+\w*set(Implementation|Impl|Beacon)\w*\s*\(", 0.7, type="function_signature",
+           scope="function", requires=[r"\b(public|external)\b"], forbids=GUARDS,
+           desc="Proxy/beacon implementation pointer setter without an access guard")],
+      ["contract P { address impl; function setImplementation(address i) external { impl = i; } }"],
+      ["contract P { address impl; function setImplementation(address i) external onlyOwner { impl = i; } }", CLEAN]))
+
+add(P("P048", "Upgrade Without Implementation Code Check", "medium", "PROXY_UPGRADEABLE", "SWC-000", "CWE-20", 0.45,
+      [det(r"function\s+\w*(upgradeTo|setImplementation|upgradeBeaconTo)\w*\s*\(", 0.45,
+           type="function_signature", scope="function", requires=[r"\b(public|external)\b"],
+           forbids=[r"code\.length", "isContract", "extcodesize", r"Address\."],
+           desc="Implementation pointer updated without checking the target is a contract")],
+      ["contract B { address impl; function upgradeTo(address n) external onlyOwner { impl = n; } }"],
+      ["contract B { address impl; function upgradeTo(address n) external onlyOwner { require(n.code.length > 0); impl = n; } }", CLEAN]))
+
 # --------------------------------------------------------------------- ARITHMETIC
 add(P("P004", "Outdated Compiler (Overflow Risk)", "critical", "ARITHMETIC", "SWC-101", "CWE-190", 0.7,
       [det(r"pragma\s+solidity\s+[\^>=~ ]*0\.[0-7]\.", 0.7,

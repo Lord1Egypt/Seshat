@@ -1,0 +1,26 @@
+id: P048
+name: 'Upgrade Without Implementation Code Check'
+severity: medium
+category: PROXY_UPGRADEABLE
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-20
+detectors:
+  - type: function_signature
+    pattern: 'function\s+\w*(upgradeTo|setImplementation|upgradeBeaconTo)\w*\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'code\.length'
+      - 'isContract'
+      - 'extcodesize'
+      - 'Address\.'
+    confidence: 0.45
+    description: 'Implementation pointer updated without checking the target is a contract'
+tests:
+  positive:
+    - 'contract B { address impl; function upgradeTo(address n) external onlyOwner { impl = n; } }'
+  negative:
+    - 'contract B { address impl; function upgradeTo(address n) external onlyOwner { require(n.code.length > 0); impl = n; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

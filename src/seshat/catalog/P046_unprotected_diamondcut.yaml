@@ -1,0 +1,31 @@
+id: P046
+name: 'Unprotected diamondCut'
+severity: critical
+category: PROXY_UPGRADEABLE
+confidence: 0.7
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: function_signature
+    pattern: 'function\s+\w*(diamondCut|facetCut|replaceFacet|addFacet|removeFacet|setFacet|registerFacet)\w*\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+      - 'enforceIsContractOwner'
+      - 'LibDiamond\.enforce'
+    confidence: 0.7
+    description: 'EIP-2535 facet management without an owner/role guard'
+tests:
+  positive:
+    - 'contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external { f[s[0]] = a; } }'
+  negative:
+    - 'contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external onlyOwner { f[s[0]] = a; } }'
+    - 'contract D { mapping(bytes4=>address) f; function diamondCut(bytes4[] calldata s, address a) external { LibDiamond.enforceIsContractOwner(); f[s[0]] = a; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

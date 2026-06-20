@@ -9,7 +9,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.0-44cc44?style=for-the-badge&labelColor=1a1a2e" alt="v1.0"/>
   <img src="https://img.shields.io/badge/runs-100%25%20local-00d4aa?style=for-the-badge&labelColor=1a1a2e" alt="Local"/>
-  <img src="https://img.shields.io/badge/patterns-103-gold?style=for-the-badge&labelColor=1a1a2e" alt="Patterns"/>
+  <img src="https://img.shields.io/badge/patterns-106-gold?style=for-the-badge&labelColor=1a1a2e" alt="Patterns"/>
   <img src="https://img.shields.io/badge/dependencies-zero-2ea043?style=for-the-badge&labelColor=1a1a2e" alt="Zero deps"/>
   <img src="https://img.shields.io/badge/database-SQLite-003B57?style=for-the-badge&labelColor=1a1a2e&logo=sqlite" alt="SQLite"/>
   <img src="https://img.shields.io/badge/cloud-none-ff4444?style=for-the-badge&labelColor=1a1a2e" alt="No Cloud"/>
@@ -44,7 +44,7 @@ It is built for people who want to **own their data and their analysis**: audito
 |---|:---:|:---:|:---:|
 | **Runs locally / offline** | ✅ download & run | ❌ cloud (GitHub Actions) | ⚠️ varies |
 | **Owns a local database** | ✅ SQLite, queryable | ❌ JSON registry | ❌ stateless |
-| **Detection patterns** | ✅ **103** | 50 | 30–90 |
+| **Detection patterns** | ✅ **106** | 50 | 30–90 |
 | **Ingests local projects** | ✅ foundry/hardhat/.sol | ❌ tokens only | ✅ |
 | **Scan history & diffing** | ✅ compare runs | ❌ | ⚠️ rare |
 | **SARIF / IDE export** | ✅ SARIF 2.1.0 | ❌ | ⚠️ some |
@@ -61,7 +61,7 @@ It is built for people who want to **own their data and their analysis**: audito
 - 🧪 **Honest, deduplicated findings** — flatten Standard-JSON (and Etherscan's `{{…}}`), drop bundled dependencies, strip comments/strings, dedup per `(pattern, line)`, and threshold by confidence — so the numbers mean something.
 - 🔁 **Scan diffing** — compare two scans of the same corpus: what's new, what's fixed, what regressed.
 - 📤 **Export everywhere** — JSON, CSV, **SARIF** (for VS Code / CI annotations), Markdown, and a self-contained offline **HTML report** you can open in any browser.
-- ⚡ **Rust performance core** — a parallel Rust engine (`rust/`) reads the same patterns and produces **identical findings** ≈**6.4× faster** on large corpora; the zero-dependency Python engine stays the ergonomic default.
+- ⚡ **Rust performance core** — a parallel Rust engine (`rust/`) reads the same patterns and produces **identical findings** ≈**5–6× faster** on large corpora; the zero-dependency Python engine stays the ergonomic default.
 
 ---
 
@@ -106,7 +106,7 @@ pipx install seshat-scanner       # or: pip install seshat-scanner
 # Build a local archive from a project (deps auto-excluded), then scan
 seshat init
 seshat ingest ./my-foundry-project
-seshat scan                       # runs all 103 patterns into seshat.db
+seshat scan                       # runs all 106 patterns into seshat.db
 
 # Read the results — fully offline
 seshat report                     # pretty terminal triage view
@@ -146,7 +146,7 @@ Seshat ships in eight focused phases. Full detail + acceptance criteria in **[RO
 | **6** | 📦 Distribution | PyPI · binaries · demo |
 | **7** | 🧠 Ecosystem | Plugins · IDE/SARIF · interop |
 
-**Current status:** 🎉 **v1.0 — all 8 phases shipped** (0–7): schema · ingestion · 103-pattern engine · query/diff/incremental · reporting · ⚡ Rust core (≈6.4× faster, identical findings — [benchmark](docs/BENCHMARK.md)) · distribution · plugins/interop.
+**Current status:** 🎉 **v1.0 — all 8 phases shipped** (0–7): schema · ingestion · 106-pattern engine · query/diff/incremental · reporting · ⚡ Rust core (≈5–6× faster, identical findings — [benchmark](docs/BENCHMARK.md)) · distribution · plugins/interop.
 
 ---
 
