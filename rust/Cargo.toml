@@ -1,0 +1,27 @@
+[package]
+name = "seshat-rs"
+version = "1.0.0"
+edition = "2021"
+description = "Rust performance core for Seshat — same patterns, identical findings, parallel."
+license = "MIT"
+repository = "https://github.com/Lord1Egypt/Seshat"
+
+[[bin]]
+name = "seshat-rs"
+path = "src/main.rs"
+
+[lib]
+name = "seshat_rs"
+path = "src/lib.rs"
+
+[dependencies]
+fancy-regex = "0.13"     # lookaround support → parity with Python `re`
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = "1"
+walkdir = "2"
+rayon = "1"              # data-parallel scanning across files
+
+[profile.release]
+lto = true
+codegen-units = 1
