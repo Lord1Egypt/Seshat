@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seshat-scanner"
+version = "0.1.0"
+description = "Offline-first, downloadable smart-contract vulnerability scanner + local SQLite archive."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Lord1Egypt" }]
+keywords = ["solidity", "security", "scanner", "evm", "static-analysis", "offline", "sqlite"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+]
+# Core path is zero-dependency: Python standard library + sqlite3 only.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Lord1Egypt/Seshat"
+Repository = "https://github.com/Lord1Egypt/Seshat"
+
+[project.optional-dependencies]
+# Dev tooling only — never required to run the scanner.
+dev = ["ruff>=0.5"]
+
+[project.scripts]
+seshat = "seshat.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

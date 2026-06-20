@@ -6,15 +6,15 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 
 ---
 
-## Phase 0 — 🏛️ Foundation & Schema
-- [ ] Repo scaffold (`src/`, `tests/`, `patterns/`, `docs/`)
-- [ ] `LICENSE` (MIT), `CLAUDE.md`, `.gitignore`, `pyproject.toml`
-- [ ] Offline CI workflow (lint + unit tests, no network)
-- [ ] SQLite schema v1 (`chains`, `contracts`, `sources`, `patterns`, `scans`, `findings`)
-- [ ] Migration system + schema-version table
-- [ ] Core dataclasses + thin DB access layer
-- [ ] `seshat init` command (idempotent)
-- [ ] Schema test enforces migrations apply cleanly
+## Phase 0 — 🏛️ Foundation & Schema ✅
+- [x] Repo scaffold (`src/`, `tests/`, `patterns/`, `docs/`)
+- [x] `LICENSE` (MIT), `CLAUDE.md`, `.gitignore`, `pyproject.toml`
+- [x] Offline CI workflow (lint + unit tests, no network)
+- [x] SQLite schema v1 (`chains`, `contracts`, `sources`, `patterns`, `scans`, `findings`)
+- [x] Migration system + schema-version table
+- [x] Core dataclasses + thin DB access layer
+- [x] `seshat init` command (idempotent)
+- [x] Schema test enforces migrations apply cleanly
 
 ## Phase 1 — 📥 Ingestion Engine
 - [ ] Importer: local `.sol` files
