@@ -1,0 +1,23 @@
+id: P031
+name: 'Flash Loan Reentrancy Bridge'
+severity: critical
+category: REENTRANCY
+confidence: 0.5
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '(onFlashLoan|executeOperation|flashLoan)'
+    scope: function
+    requires:
+      - '\.call'
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.5
+    description: 'Flash-loan callback performs external call without a guard'
+tests:
+  positive:
+    - 'contract C { function onFlashLoan(address i, uint a) external { i.call(""); } }'
+  negative:
+    - 'contract C { function onFlashLoan(address i, uint a) external nonReentrant { i.call(""); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

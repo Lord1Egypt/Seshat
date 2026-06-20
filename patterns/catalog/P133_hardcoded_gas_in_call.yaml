@@ -1,0 +1,17 @@
+id: P133
+name: 'Hardcoded Gas In Call'
+severity: medium
+category: EXTERNAL_CALLS
+confidence: 0.45
+swc: SWC-134
+cwe: CWE-691
+detectors:
+  - type: regex
+    pattern: '\.call\{[^}]*gas\s*:'
+    confidence: 0.45
+    description: 'Hardcoded gas amount in a low-level call'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { t.call{gas: 2300}(""); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

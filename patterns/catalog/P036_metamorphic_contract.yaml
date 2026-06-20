@@ -1,0 +1,19 @@
+id: P036
+name: 'Metamorphic Contract'
+severity: critical
+category: PROXY_UPGRADEABLE
+confidence: 0.6
+swc: SWC-000
+cwe: CWE-913
+detectors:
+  - type: regex
+    pattern: 'selfdestruct'
+    requires:
+      - '(create2|\{\s*salt)'
+    confidence: 0.6
+    description: 'selfdestruct combined with CREATE2 (metamorphic redeploy)'
+tests:
+  positive:
+    - 'contract C { function k() public { selfdestruct(payable(0)); } function d(bytes32 s) public { new X{salt: s}(); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

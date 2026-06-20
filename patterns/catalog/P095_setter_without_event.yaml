@@ -1,0 +1,21 @@
+id: P095
+name: 'Setter Without Event'
+severity: low
+category: BUSINESS_LOGIC
+confidence: 0.35
+swc: SWC-000
+cwe: CWE-778
+detectors:
+  - type: function_signature
+    pattern: 'function\s+set[A-Z]\w*\s*\('
+    scope: function
+    forbids:
+      - 'emit'
+    confidence: 0.35
+    description: 'Critical setter emits no event'
+tests:
+  positive:
+    - 'contract C { uint x; function setX(uint v) public { x = v; } }'
+  negative:
+    - 'contract C { event S(uint v); uint x; function setX(uint v) public { x = v; emit S(v); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

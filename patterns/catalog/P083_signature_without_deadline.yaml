@@ -1,0 +1,21 @@
+id: P083
+name: 'Signature Without Deadline'
+severity: medium
+category: SIGNATURE_CRYPTO
+confidence: 0.4
+swc: SWC-121
+cwe: CWE-294
+detectors:
+  - type: regex
+    pattern: 'ecrecover\s*\('
+    forbids:
+      - 'deadline'
+      - 'expir'
+    confidence: 0.4
+    description: 'Signed approval without an expiry/deadline'
+tests:
+  positive:
+    - 'contract C { function permit(uint8 v, bytes32 r, bytes32 s) public { address a = ecrecover(bytes32(0), v, r, s); } }'
+  negative:
+    - 'contract C { uint deadline; function permit(uint dl, uint8 v, bytes32 r, bytes32 s) public { require(block.timestamp <= dl); deadline = dl; address a = ecrecover(bytes32(0), v, r, s); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

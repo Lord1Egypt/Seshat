@@ -1,0 +1,17 @@
+id: P074
+name: 'Mutable Tax Setter'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-284
+detectors:
+  - type: regex
+    pattern: 'function\s+set\w*[Tt]ax\w*\s*\('
+    confidence: 0.4
+    description: 'Owner-mutable tax rate'
+tests:
+  positive:
+    - 'contract C { uint tax; function setTax(uint t) public { tax = t; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

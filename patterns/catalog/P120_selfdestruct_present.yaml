@@ -1,0 +1,17 @@
+id: P120
+name: 'Selfdestruct Present'
+severity: high
+category: BYTECODE_LOWLEVEL
+confidence: 0.5
+swc: SWC-106
+cwe: CWE-477
+detectors:
+  - type: regex
+    pattern: '\bselfdestruct\s*\('
+    confidence: 0.5
+    description: 'Contract can be destroyed via selfdestruct'
+tests:
+  positive:
+    - 'contract C { address owner; function k() public onlyOwner { selfdestruct(payable(owner)); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

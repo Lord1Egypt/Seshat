@@ -1,0 +1,17 @@
+id: P020
+name: 'Timestamp Dependence'
+severity: medium
+category: TIME_RANDOMNESS
+confidence: 0.45
+swc: SWC-116
+cwe: CWE-829
+detectors:
+  - type: regex
+    pattern: 'block\.timestamp\s*(<|>|<=|>=|==)|(<|>|<=|>=|==)\s*block\.timestamp'
+    confidence: 0.45
+    description: 'Control flow depends on block.timestamp'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (bool) { return block.timestamp > 100; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

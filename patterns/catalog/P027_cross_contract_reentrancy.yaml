@@ -1,0 +1,23 @@
+id: P027
+name: 'Cross-Contract Reentrancy'
+severity: critical
+category: REENTRANCY
+confidence: 0.5
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\.call\s*\('
+    scope: function
+    requires:
+      - '\w+\s*=\s*[^=]'
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.5
+    description: 'Low-level call with state write, no reentrancy guard'
+tests:
+  positive:
+    - 'contract C { uint s; function f(address t) public { t.call(""); s = 1; } }'
+  negative:
+    - 'contract C { uint s; function f(address t) public nonReentrant { s = 1; t.call(""); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

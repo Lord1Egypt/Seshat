@@ -1,0 +1,23 @@
+id: P080
+name: 'Signature Malleability'
+severity: medium
+category: SIGNATURE_CRYPTO
+confidence: 0.45
+swc: SWC-117
+cwe: CWE-347
+detectors:
+  - type: regex
+    pattern: 'ecrecover\s*\('
+    forbids:
+      - 'ECDSA'
+      - 's\s*>'
+      - 'malleab'
+      - '0x7FFF'
+    confidence: 0.45
+    description: 'Raw ecrecover without low-s malleability guard'
+tests:
+  positive:
+    - 'contract C { function f(bytes32 h, uint8 v, bytes32 r, bytes32 s) public { address a = ecrecover(h, v, r, s); } }'
+  negative:
+    - 'contract C { function f(bytes32 h, bytes memory sig) public { address a = ECDSA.recover(h, sig); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

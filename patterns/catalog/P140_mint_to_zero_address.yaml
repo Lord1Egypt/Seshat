@@ -1,0 +1,17 @@
+id: P140
+name: 'Mint To Zero Address'
+severity: medium
+category: TOKEN_ECONOMICS
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-20
+detectors:
+  - type: regex
+    pattern: '_mint\s*\(\s*address\(0\)'
+    confidence: 0.45
+    description: 'Mint to the zero address'
+tests:
+  positive:
+    - 'contract C { function f() internal { _mint(address(0), 1); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

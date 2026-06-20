@@ -1,0 +1,20 @@
+id: P070
+name: 'Mutable Fee Setter'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-284
+detectors:
+  - type: regex
+    pattern: 'function\s+set\w*[Ff]ee\w*\s*\('
+    forbids:
+      - 'require'
+    confidence: 0.4
+    description: 'Fee setter without an upper-bound check'
+tests:
+  positive:
+    - 'contract C { uint fee; function setFee(uint f) public { fee = f; } }'
+  negative:
+    - 'contract C { uint fee; function setFee(uint f) public { require(f <= 100); fee = f; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

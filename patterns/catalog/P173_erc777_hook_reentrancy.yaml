@@ -1,0 +1,17 @@
+id: P173
+name: 'ERC777 Hook Reentrancy'
+severity: high
+category: REENTRANCY
+confidence: 0.4
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: '(tokensReceived|tokensToSend)\s*\('
+    confidence: 0.4
+    description: 'ERC-777 hooks can re-enter'
+tests:
+  positive:
+    - 'contract C { function tokensReceived(address a, uint v) public { } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

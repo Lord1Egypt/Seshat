@@ -1,0 +1,28 @@
+id: P018
+name: 'Missing Access Control On Setter'
+severity: high
+category: ACCESS_CONTROL
+confidence: 0.6
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: function_signature
+    pattern: 'function\s+set[A-Z]\w*\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.6
+    description: 'State-changing setter without an access guard'
+tests:
+  positive:
+    - 'contract C { uint fee; function setFee(uint f) public { fee=f; } }'
+  negative:
+    - 'contract C { uint fee; function setFee(uint f) public onlyOwner { fee=f; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

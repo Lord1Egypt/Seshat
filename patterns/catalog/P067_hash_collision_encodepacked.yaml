@@ -1,0 +1,18 @@
+id: P067
+name: 'Hash Collision (encodePacked)'
+severity: high
+category: ARITHMETIC
+confidence: 0.55
+swc: SWC-133
+cwe: CWE-328
+detectors:
+  - type: regex
+    pattern: 'abi\.encodePacked\([^)]*,[^)]*\)'
+    confidence: 0.55
+    description: 'encodePacked with multiple dynamic args can collide'
+tests:
+  positive:
+    - 'contract C { function f(string memory a, string memory b) public pure returns (bytes32) { return keccak256(abi.encodePacked(a, b)); } }'
+  negative:
+    - 'contract C { function f(string memory a) public pure returns (bytes32) { return keccak256(abi.encode(a)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

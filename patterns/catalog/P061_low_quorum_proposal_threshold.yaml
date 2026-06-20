@@ -1,0 +1,17 @@
+id: P061
+name: 'Low Quorum / Proposal Threshold'
+severity: high
+category: GOVERNANCE
+confidence: 0.5
+swc: SWC-000
+cwe: CWE-840
+detectors:
+  - type: regex
+    pattern: '(proposalThreshold\s*=\s*0\b|quorumNumerator\s*=\s*[0-4]\b)'
+    confidence: 0.5
+    description: 'Quorum/threshold set dangerously low'
+tests:
+  positive:
+    - 'contract C { uint proposalThreshold = 0; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

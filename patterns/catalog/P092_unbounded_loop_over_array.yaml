@@ -1,0 +1,17 @@
+id: P092
+name: 'Unbounded Loop Over Array'
+severity: high
+category: BUSINESS_LOGIC
+confidence: 0.45
+swc: SWC-128
+cwe: CWE-400
+detectors:
+  - type: regex
+    pattern: 'for\s*\([^)]*<\s*\w+\.length'
+    confidence: 0.45
+    description: 'Loop bounded by a growable array length (gas DoS)'
+tests:
+  positive:
+    - 'contract C { uint[] a; function f() public { for (uint i; i < a.length; i++) { a[i] = 0; } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

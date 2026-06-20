@@ -1,0 +1,17 @@
+id: P122
+name: 'extcodesize Sender Check'
+severity: medium
+category: BYTECODE_LOWLEVEL
+confidence: 0.35
+swc: SWC-000
+cwe: CWE-697
+detectors:
+  - type: regex
+    pattern: 'extcodesize\s*\('
+    confidence: 0.35
+    description: 'extcodesize-based contract check (bypassable in constructor)'
+tests:
+  positive:
+    - 'contract C { function f(address a) public view returns (uint s) { assembly { s := extcodesize(a) } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

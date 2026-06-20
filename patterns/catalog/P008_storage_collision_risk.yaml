@@ -1,0 +1,22 @@
+id: P008
+name: 'Storage Collision Risk'
+severity: high
+category: PROXY_UPGRADEABLE
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-665
+detectors:
+  - type: regex
+    pattern: '\.delegatecall\s*\('
+    forbids:
+      - '__gap'
+      - 'StorageSlot'
+      - '\.slot'
+    confidence: 0.4
+    description: 'Proxy delegatecall without explicit storage-slot management'
+tests:
+  positive:
+    - 'contract C { function f(address t, bytes calldata d) public { t.delegatecall(d); } }'
+  negative:
+    - 'contract C { uint[50] private __gap; function f(address t, bytes calldata d) public { t.delegatecall(d); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

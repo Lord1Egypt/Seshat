@@ -1,0 +1,18 @@
+id: P107
+name: 'External Call In Loop'
+severity: high
+category: EXTERNAL_CALLS
+confidence: 0.55
+swc: SWC-113
+cwe: CWE-400
+detectors:
+  - type: regex
+    pattern: 'for\s*\([^)]*\)[^{]*\{[^}]*\.call'
+    multiline: true
+    confidence: 0.55
+    description: 'External call inside a loop (griefing / gas DoS)'
+tests:
+  positive:
+    - 'contract C { function f(address[] calldata t) public { for (uint i; i<t.length; i++) { t[i].call(""); } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

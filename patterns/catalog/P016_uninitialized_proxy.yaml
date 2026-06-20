@@ -1,0 +1,20 @@
+id: P016
+name: 'Uninitialized Proxy'
+severity: critical
+category: PROXY_UPGRADEABLE
+confidence: 0.55
+swc: SWC-118
+cwe: CWE-665
+detectors:
+  - type: regex
+    pattern: 'is\s+[^{]*(Initializable|UUPSUpgradeable)'
+    forbids:
+      - '_disableInitializers'
+    confidence: 0.55
+    description: 'Upgradeable contract without _disableInitializers()'
+tests:
+  positive:
+    - 'contract C is Initializable { constructor() { } }'
+  negative:
+    - 'contract C is Initializable { constructor() { _disableInitializers(); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

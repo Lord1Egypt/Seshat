@@ -1,0 +1,18 @@
+id: P042
+name: 'Gas Stipend Dependency'
+severity: medium
+category: EXTERNAL_CALLS
+confidence: 0.55
+swc: SWC-134
+cwe: CWE-691
+detectors:
+  - type: regex
+    pattern: '\.(transfer|send)\s*\(\s*[^,)]*\)'
+    confidence: 0.55
+    description: 'ETH transfer/send relies on the fixed 2300-gas stipend'
+tests:
+  positive:
+    - 'contract C { function f(address payable t) public { t.transfer(1 ether); } }'
+  negative:
+    - 'contract C { function f(address t, uint a) public { IERC20(t).transfer(t, a); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

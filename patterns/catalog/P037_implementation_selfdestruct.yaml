@@ -1,0 +1,19 @@
+id: P037
+name: 'Implementation Selfdestruct'
+severity: critical
+category: PROXY_UPGRADEABLE
+confidence: 0.6
+swc: SWC-106
+cwe: CWE-665
+detectors:
+  - type: regex
+    pattern: 'selfdestruct'
+    requires:
+      - 'Upgradeable'
+    confidence: 0.6
+    description: 'selfdestruct in an upgradeable implementation'
+tests:
+  positive:
+    - 'contract C is UUPSUpgradeable { function k() public { selfdestruct(payable(0)); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

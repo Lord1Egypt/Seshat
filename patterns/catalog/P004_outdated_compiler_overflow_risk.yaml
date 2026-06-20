@@ -1,0 +1,18 @@
+id: P004
+name: 'Outdated Compiler (Overflow Risk)'
+severity: critical
+category: ARITHMETIC
+confidence: 0.7
+swc: SWC-101
+cwe: CWE-190
+detectors:
+  - type: regex
+    pattern: 'pragma\s+solidity\s+[\^>=~ ]*0\.[0-7]\.'
+    confidence: 0.7
+    description: 'Pre-0.8 compiler without built-in overflow checks'
+tests:
+  positive:
+    - 'pragma solidity 0.7.6; contract C { }'
+  negative:
+    - 'pragma solidity ^0.8.20; contract C { }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

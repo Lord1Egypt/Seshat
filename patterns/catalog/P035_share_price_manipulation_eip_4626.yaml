@@ -1,0 +1,17 @@
+id: P035
+name: 'Share Price Manipulation (EIP-4626)'
+severity: critical
+category: ARITHMETIC
+confidence: 0.5
+swc: SWC-000
+cwe: CWE-682
+detectors:
+  - type: regex
+    pattern: '(convertToShares|previewDeposit|convertToAssets)'
+    confidence: 0.5
+    description: 'Vault share math vulnerable to first-deposit/donation attacks'
+tests:
+  positive:
+    - 'contract C { uint totalSupply; uint totalAssets; function convertToShares(uint a) public view returns (uint) { return a * totalSupply / totalAssets; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,17 @@
+id: P100
+name: 'Approve Race Condition'
+severity: medium
+category: ERC_STANDARDS
+confidence: 0.35
+swc: SWC-114
+cwe: CWE-362
+detectors:
+  - type: regex
+    pattern: '\.approve\s*\(\s*[^,]+,\s*type\(uint\d*\)\.max'
+    confidence: 0.35
+    description: 'Unlimited approval (allowance race / over-approval)'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { IERC20(t).approve(t, type(uint256).max); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

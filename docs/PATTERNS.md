@@ -77,3 +77,13 @@ Hard rules, learned the hard way on MaatEye:
 ## Provenance
 
 The first 50 patterns are migrated from **MaatEye** *with their corrections already applied* (e.g. ETH-only gas-stipend matching, 2-arg ERC-20 transfer detection, proxy-scoped constructor checks, no keyword-co-occurrence AST rules). The remaining ~78 expand coverage toward the full SWC registry and modern DeFi weakness classes.
+
+## Implementation status (Phase 2 — shipped)
+
+- **103 patterns** ship in `patterns/catalog/` across all 12 categories; each is a self-contained YAML file with **inline** TP/FP fixtures.
+- **Zero dependencies.** YAML is parsed by a stdlib `miniyaml` subset loader (regex lives in single-quoted scalars so backslashes stay literal). No PyYAML.
+- **One unified matcher** backs the four declared kinds: `scope: file` (per-line) or `scope: function` (brace-balanced body, including `receive`/`fallback`), optional `multiline`, and `requires`/`forbids` lists that compose detectors into `function_signature`/`ast`/`semantic` checks without a real compiler.
+- **Engine contracts:** sub-threshold detectors are dropped; findings are deduped per `(pattern, line)`, highest confidence wins.
+- **Gates (CI):** `seshat patterns --validate` proves every pattern's fixtures; a clean OZ-style ERC-20 raises **zero critical** flags; the catalog count is asserted ≥ 100.
+- Regenerate the catalog with `python tools/gen_catalog.py` (the YAML files are the source of truth; the generator is committed for provenance).
+- Run a scan with `seshat scan`; results persist to the archive with a reproducible `pattern_set_hash`.

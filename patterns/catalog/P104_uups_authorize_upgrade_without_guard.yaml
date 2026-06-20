@@ -1,0 +1,27 @@
+id: P104
+name: 'UUPS Authorize Upgrade Without Guard'
+severity: critical
+category: ACCESS_CONTROL
+confidence: 0.7
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: ast
+    pattern: 'function\s+_authorizeUpgrade\s*\('
+    scope: function
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+      - 'onlyProxy'
+    confidence: 0.7
+    description: '_authorizeUpgrade with no access guard'
+tests:
+  positive:
+    - 'contract C { function _authorizeUpgrade(address n) internal { } }'
+  negative:
+    - 'contract C { function _authorizeUpgrade(address n) internal onlyOwner { } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

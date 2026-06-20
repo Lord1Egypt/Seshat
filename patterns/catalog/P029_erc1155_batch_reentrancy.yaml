@@ -1,0 +1,21 @@
+id: P029
+name: 'ERC1155 Batch Reentrancy'
+severity: critical
+category: REENTRANCY
+confidence: 0.45
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\bsafeBatchTransferFrom\s*\('
+    scope: function
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.45
+    description: 'safeBatchTransferFrom callback without a guard'
+tests:
+  positive:
+    - 'contract C { function f(address n) public { I(n).safeBatchTransferFrom(address(this), msg.sender, ids, amts, bytes(0)); } }'
+  negative:
+    - 'contract C { function f(address n) public nonReentrant { I(n).safeBatchTransferFrom(address(this), msg.sender, ids, amts, bytes(0)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,17 @@
+id: P034
+name: 'Fee Calculation Risk'
+severity: medium
+category: ARITHMETIC
+confidence: 0.4
+swc: SWC-101
+cwe: CWE-682
+detectors:
+  - type: regex
+    pattern: '\bfee\w*\s*=\s*[^;]*[*/]'
+    confidence: 0.4
+    description: 'Fee computed with multiplication/division'
+tests:
+  positive:
+    - 'contract C { uint fee; function set(uint a) public { fee = a * 3 / 100; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

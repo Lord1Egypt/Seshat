@@ -1,0 +1,23 @@
+id: P038
+name: 'Constructor In Implementation'
+severity: high
+category: PROXY_UPGRADEABLE
+confidence: 0.5
+swc: SWC-118
+cwe: CWE-665
+detectors:
+  - type: regex
+    pattern: 'constructor\s*\('
+    requires:
+      - 'Upgradeable'
+      - '=\s*[^=]'
+    forbids:
+      - '_disableInitializers'
+    confidence: 0.5
+    description: 'Constructor with state init in an upgradeable implementation'
+tests:
+  positive:
+    - 'contract C is UUPSUpgradeable { uint x; constructor() { x = 1; } }'
+  negative:
+    - 'contract C is UUPSUpgradeable { constructor() { _disableInitializers(); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

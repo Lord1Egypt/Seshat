@@ -1,0 +1,28 @@
+id: P077
+name: 'Unprotected Emergency Function'
+severity: high
+category: GOVERNANCE
+confidence: 0.55
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: function_signature
+    pattern: 'function\s+emergency\w*\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.55
+    description: 'Emergency function without a guard'
+tests:
+  positive:
+    - 'contract C { function emergencyWithdraw() public { payable(msg.sender).transfer(address(this).balance); } }'
+  negative:
+    - 'contract C { function emergencyWithdraw() public onlyOwner { payable(msg.sender).transfer(address(this).balance); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

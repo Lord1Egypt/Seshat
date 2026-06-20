@@ -1,0 +1,17 @@
+id: P127
+name: 'gasleft For Control Flow'
+severity: medium
+category: BYTECODE_LOWLEVEL
+confidence: 0.35
+swc: SWC-000
+cwe: CWE-691
+detectors:
+  - type: regex
+    pattern: 'gasleft\s*\(\s*\)'
+    confidence: 0.35
+    description: 'Logic depends on remaining gas'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (uint) { return gasleft(); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

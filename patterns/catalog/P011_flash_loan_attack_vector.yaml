@@ -1,0 +1,17 @@
+id: P011
+name: 'Flash Loan Attack Vector'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: '\bflashLoan\s*\('
+    confidence: 0.45
+    description: 'Flash-loan entrypoint present'
+tests:
+  positive:
+    - 'contract C { function flashLoan(uint a) public { } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

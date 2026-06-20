@@ -1,0 +1,17 @@
+id: P014
+name: 'Unsafe Ownership Renounce'
+severity: medium
+category: ACCESS_CONTROL
+confidence: 0.5
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: regex
+    pattern: 'function\s+renounceOwnership\s*\('
+    confidence: 0.5
+    description: 'renounceOwnership left enabled'
+tests:
+  positive:
+    - 'contract C { function renounceOwnership() public { } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

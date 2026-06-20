@@ -1,0 +1,23 @@
+id: P030
+name: 'Reentrancy Via Fallback'
+severity: high
+category: REENTRANCY
+confidence: 0.5
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\b(receive|fallback)\b'
+    scope: function
+    requires:
+      - '\.call'
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.5
+    description: 'receive/fallback performs an external call without a guard'
+tests:
+  positive:
+    - 'contract C { receive() external payable { msg.sender.call{value:1}(""); } }'
+  negative:
+    - 'contract C { receive() external payable { } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,20 @@
+id: P088
+name: 'Swap Without Deadline'
+severity: medium
+category: TIME_RANDOMNESS
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: 'swap\w*\s*\('
+    forbids:
+      - 'deadline'
+    confidence: 0.4
+    description: 'DEX swap without a deadline parameter'
+tests:
+  positive:
+    - 'contract C { function go() public { router.swapExactTokensForTokens(1, 0, path, msg.sender); } }'
+  negative:
+    - 'contract C { function go(uint dl) public { router.swapExactTokensForTokens(1, 0, path, msg.sender, dl); uint deadline = dl; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'
