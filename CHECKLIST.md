@@ -52,14 +52,14 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Incremental re-scan (only changed contracts; no-op touches zero)
 - [x] Tests for query, diff, incremental
 
-## Phase 4 — 📤 Reporting & UX
-- [ ] Exporter: JSON
-- [ ] Exporter: CSV
-- [ ] Exporter: SARIF (validates; renders in VS Code)
-- [ ] Exporter: Markdown
-- [ ] Exporter: self-contained offline HTML report
-- [ ] Pretty CLI + optional TUI triage view
-- [ ] Review-flag framing surfaced in every output
+## Phase 4 — 📤 Reporting & UX ✅
+- [x] Exporter: JSON
+- [x] Exporter: CSV
+- [x] Exporter: SARIF 2.1.0 (valid shape; security-severity for code scanning)
+- [x] Exporter: Markdown
+- [x] Exporter: self-contained offline HTML report
+- [x] Pretty CLI triage view (`report --format table`; full curses TUI deferred — optional)
+- [x] Review-flag framing surfaced in every output
 
 ## Phase 5 — ⚡ Rust Performance Core
 - [ ] Rust engine reading the same pattern format
