@@ -7,13 +7,15 @@
 *She who measures, records, and remembers — an **offline-first** smart-contract vulnerability **archive & scanner** that builds a local database you own.*
 
 <p align="center">
-  <img src="https://img.shields.io/badge/status-design%20phase-blueviolet?style=for-the-badge&labelColor=1a1a2e" alt="Status"/>
   <img src="https://img.shields.io/badge/runs-100%25%20local-00d4aa?style=for-the-badge&labelColor=1a1a2e" alt="Local"/>
-  <img src="https://img.shields.io/badge/patterns-100%2B%20planned-gold?style=for-the-badge&labelColor=1a1a2e" alt="Patterns"/>
+  <img src="https://img.shields.io/badge/patterns-103-gold?style=for-the-badge&labelColor=1a1a2e" alt="Patterns"/>
+  <img src="https://img.shields.io/badge/dependencies-zero-2ea043?style=for-the-badge&labelColor=1a1a2e" alt="Zero deps"/>
   <img src="https://img.shields.io/badge/database-SQLite-003B57?style=for-the-badge&labelColor=1a1a2e&logo=sqlite" alt="SQLite"/>
   <img src="https://img.shields.io/badge/cloud-none-ff4444?style=for-the-badge&labelColor=1a1a2e" alt="No Cloud"/>
   <img src="https://img.shields.io/badge/license-MIT-44cc44?style=for-the-badge&labelColor=1a1a2e" alt="MIT"/>
 </p>
+
+<p align="center"><img src="docs/demo.svg" alt="Seshat terminal demo" width="700"/></p>
 
 <p align="center">
   <b>🏛️ Named after Seshat (𓋇)</b> — ancient Egyptian goddess of writing, wisdom, measurement,<br>
@@ -22,11 +24,6 @@
 </p>
 
 </div>
-
----
-
-> ### 📐 This repository is in its **design phase**.
-> The architecture, roadmap, and pattern taxonomy below are the **blueprint**. Code lands phase by phase (see the [Roadmap](#-roadmap)). Documentation first, so the foundation is right before a single line is written.
 
 ---
 
@@ -46,16 +43,16 @@ It is built for people who want to **own their data and their analysis**: audito
 |---|:---:|:---:|:---:|
 | **Runs locally / offline** | ✅ download & run | ❌ cloud (GitHub Actions) | ⚠️ varies |
 | **Owns a local database** | ✅ SQLite, queryable | ❌ JSON registry | ❌ stateless |
-| **Detection patterns** | ✅ **100+** | 50 | 30–90 |
+| **Detection patterns** | ✅ **103** | 50 | 30–90 |
 | **Ingests local projects** | ✅ foundry/hardhat/.sol | ❌ tokens only | ✅ |
 | **Scan history & diffing** | ✅ compare runs | ❌ | ⚠️ rare |
-| **SARIF / IDE export** | ✅ planned | ❌ | ⚠️ some |
+| **SARIF / IDE export** | ✅ SARIF 2.1.0 | ❌ | ⚠️ some |
 | **Zero-/low-dependency** | ✅ stdlib + sqlite3 | ✅ | ❌ heavy deps |
 | **Sends your source anywhere** | ❌ never | ⚠️ explorer fetch | ⚠️ varies |
 
 ---
 
-## 🧩 Core features (planned)
+## 🧩 Core features
 
 - 🗄️ **Local vulnerability database** — every contract, its source, every scan, and every finding live in `seshat.db`. Re-openable, queryable with plain SQL, and 100% offline.
 - 🎯 **100+ detection patterns** — a SWC/CWE-mapped taxonomy across access control, reentrancy, arithmetic, proxies, oracles, governance, token economics, signatures, and more — each with a confidence score and labeled test fixtures.
@@ -98,28 +95,38 @@ Detailed design lives in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**, the s
 
 ---
 
-## 🚀 Quick start *(target experience — not yet implemented)*
+## 🚀 Quick start
 
 ```bash
-# Install (planned distribution channels)
-pipx install seshat          # Python
-# or:  cargo install seshat  # Rust core
-# or:  download a standalone binary — no runtime required
+# Install — pure Python, zero runtime dependencies, patterns bundled in
+pipx install seshat-scanner       # or: pip install seshat-scanner
+# (or grab a standalone binary from the GitHub Releases — no runtime needed)
 
-# Build a database from a local project
+# Build a local archive from a project (deps auto-excluded), then scan
+seshat init
 seshat ingest ./my-foundry-project
-seshat scan                       # runs all 100+ patterns into seshat.db
+seshat scan                       # runs all 103 patterns into seshat.db
 
-# Ask the archive questions — offline
-seshat query "SELECT name, severity, COUNT(*) FROM findings GROUP BY 1,2"
-seshat report --html out.html     # self-contained offline report
-seshat diff --since last-week     # what changed?
+# Read the results — fully offline
+seshat report                     # pretty terminal triage view
+seshat report -o report.html      # self-contained offline HTML
+seshat report -o findings.sarif   # SARIF for VS Code / CI annotations
 
-# Ingest by address (fetched once, then cached locally forever)
-seshat ingest --chain ethereum 0xA0b8...  --scan
+# Ask the archive questions
+seshat query --canned by-severity
+seshat query "SELECT pattern_id, COUNT(*) n FROM findings GROUP BY 1 ORDER BY n DESC"
+seshat search "delegatecall"      # full-text search over stored source
+
+# Re-scan only what changed, then see the delta
+seshat scan --incremental
+seshat diff 1 2                   # new / fixed / regressed
+
+# Ingest by address (fetched once with --online, then cached forever)
+seshat ingest --address 0xA0b8... --chain ethereum --online
 ```
 
-> The commands above describe the **intended** UX. They are the contract the build will fulfill — see the [Roadmap](#-roadmap).
+Everything above runs with **no network** (the one exception is an explicit
+`--online` address fetch, which then caches). `seshat --help` lists every command.
 
 ---
 
@@ -135,10 +142,10 @@ Seshat ships in eight focused phases. Full detail + acceptance criteria in **[RO
 | **3** | 🗄️ Local DB & query | Persist, SQL/canned queries, scan diff |
 | **4** | 📤 Reporting & UX | JSON/CSV/SARIF/MD/HTML, pretty CLI/TUI |
 | **5** | ⚡ Rust performance core | Parallel engine for large corpora |
-| **6** | 📦 Distribution | PyPI · crates.io · binaries · demo GIF |
+| **6** | 📦 Distribution | PyPI · binaries · demo |
 | **7** | 🧠 Ecosystem | Plugins · IDE/SARIF · interop |
 
-**Current status:** 📐 *Phase 0 — design & documentation.*
+**Current status:** ✅ Phases **0–4 shipped** (schema · ingestion · 103-pattern engine · query/diff/incremental · reporting) and 📦 **Phase 6 distribution** in progress. Phase 5 (Rust) is optional/perf-only.
 
 ---
 

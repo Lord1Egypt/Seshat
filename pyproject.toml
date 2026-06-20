@@ -35,6 +35,11 @@ seshat = "seshat.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+# Ship the 103-pattern catalog inside the wheel so scanning works fully offline
+# after `pip install` / `pipx install` — no repo, no network needed.
+seshat = ["catalog/*.yaml"]
+
 [tool.ruff]
 line-length = 100
 src = ["src", "tests"]
@@ -43,7 +48,7 @@ src = ["src", "tests"]
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
-# The catalog generator holds long inline Solidity fixture strings (data, not logic).
-"tools/gen_catalog.py" = ["E501"]
+# Generators hold long inline data (Solidity fixtures, SVG/CSS markup), not logic.
+"tools/*" = ["E501"]
 # report.py embeds an HTML/CSS template; long markup lines are data, not logic.
 "src/seshat/report.py" = ["E501"]

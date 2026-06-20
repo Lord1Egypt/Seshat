@@ -69,13 +69,13 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [ ] Benchmarks documented
 
 ## Phase 6 — 📦 Distribution
-- [ ] PyPI package (`pipx install seshat`)
-- [ ] crates.io package
-- [ ] Standalone binaries (Linux/macOS/Windows)
-- [ ] Offline pattern bundle shipped in package
-- [ ] Clean-machine, network-disabled smoke test
-- [ ] VHS terminal demo GIF in README
-- [ ] Docs site
+- [x] PyPI package (`pipx install seshat-scanner`) — buildable wheel/sdist (publish = maintainer step)
+- [ ] crates.io package (depends on Phase 5 Rust core — deferred)
+- [x] Standalone binaries (Linux/macOS/Windows) — release workflow builds on tag
+- [x] Offline pattern bundle shipped in package (103 patterns as package-data)
+- [x] Clean-machine, network-disabled smoke test (offline wheel install + scan verified)
+- [x] Terminal demo in README (animated SVG; VHS `.tape` committed for GIF)
+- [ ] Docs site (docs/ markdown present; hosted site optional)
 
 ## Phase 7 — 🧠 Ecosystem & Polish
 - [ ] Plugin system for custom patterns
