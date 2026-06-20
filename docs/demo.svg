@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="388"
+     viewBox="0 0 760 388" font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14">
+  <style>
+    .ln { opacity: 0; animation: show .25s ease forwards; animation-delay: var(--d); }
+    @keyframes show { from { opacity: 0; } to { opacity: 1; } }
+    .cur { animation: blink 1s steps(1) infinite; animation-delay: 6.65s; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+  <rect width="760" height="388" rx="10" fill="#0d1117" stroke="#30363d"/>
+  <rect width="760" height="36" rx="10" fill="#161b22"/>
+  <rect y="26" width="760" height="10" fill="#161b22"/>
+  <circle cx="22" cy="18" r="6" fill="#ff5f56"/>
+  <circle cx="42" cy="18" r="6" fill="#ffbd2e"/>
+  <circle cx="62" cy="18" r="6" fill="#27c93f"/>
+  <text x="380" y="23" text-anchor="middle" fill="#8b949e" font-size="12">seshat — offline contract review</text>
+  <text class="ln" x="20" y="56" style="--d:0.3s"><tspan fill="#7ee787">$</tspan><tspan fill="#e6e6e6"> pipx install seshat-scanner</tspan></text>
+  <text class="ln" x="20" y="80" style="--d:0.75s"><tspan fill="#7ee787">$</tspan><tspan fill="#e6e6e6"> seshat ingest ./MyVault.sol</tspan></text>
+  <text class="ln" x="20" y="104" style="--d:1.2s"><tspan fill="#7ee787">📥 ingested into seshat.db: 1 new (1 with verified source)</tspan></text>
+  <text class="ln" x="20" y="128" style="--d:1.65s"><tspan fill="#7ee787">$</tspan><tspan fill="#e6e6e6"> seshat scan</tspan></text>
+  <text class="ln" x="20" y="152" style="--d:2.1s"><tspan fill="#7ee787">🔍 scan #1: 1 contracts, 103 patterns → 4 review flags</tspan></text>
+  <text class="ln" x="20" y="176" style="--d:2.55s"><tspan fill="#7ee787">$</tspan><tspan fill="#e6e6e6"> seshat report</tspan></text>
+  <text class="ln" x="20" y="200" style="--d:3.0s"><tspan fill="#d2a8ff">👁️⚖️  Seshat — scan #1  (4 review flags)</tspan></text>
+  <text class="ln" x="20" y="224" style="--d:3.45s"><tspan fill="#ff7b72">  ── CRITICAL ──</tspan></text>
+  <text class="ln" x="20" y="248" style="--d:3.9s"><tspan fill="#ff7b72">    P001  MyVault:12  Public mint without an owner guard</tspan></text>
+  <text class="ln" x="20" y="272" style="--d:4.35s"><tspan fill="#ff7b72">    P003  MyVault:20  Value call without a reentrancy guard</tspan></text>
+  <text class="ln" x="20" y="296" style="--d:4.8s"><tspan fill="#ffa657">  ── HIGH ──</tspan></text>
+  <text class="ln" x="20" y="320" style="--d:5.25s"><tspan fill="#ffa657">    P006  MyVault:20  Unchecked low-level call</tspan></text>
+  <text class="ln" x="20" y="344" style="--d:5.7s"><tspan fill="#e3b341">  ⚠️  Review flags are heuristic, not confirmed vulnerabilities.</tspan></text>
+  <rect class="cur" x="20" y="356" width="8" height="15" fill="#7ee787"/>
+</svg>

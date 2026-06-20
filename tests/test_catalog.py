@@ -42,6 +42,15 @@ class CatalogTests(unittest.TestCase):
     def test_catalog_not_empty(self):
         self.assertGreater(len(self.patterns), 0)
 
+    def test_catalog_is_bundled_in_package(self):
+        # The catalog must live inside the package so it ships as package-data
+        # and works offline after install (no repo, no network).
+        import seshat
+        catalog = default_catalog_dir()
+        pkg_dir = __import__("pathlib").Path(seshat.__file__).resolve().parent
+        self.assertEqual(catalog.name, "catalog")
+        self.assertEqual(catalog.resolve().parent, pkg_dir)
+
     def test_at_least_100_patterns(self):
         self.assertGreaterEqual(
             len(self.patterns), 100,

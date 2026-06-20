@@ -15,7 +15,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-OUT = Path(__file__).resolve().parent.parent / "patterns" / "catalog"
+# Catalog lives INSIDE the package so it ships as package-data (offline install).
+OUT = Path(__file__).resolve().parent.parent / "src" / "seshat" / "catalog"
 
 # A vanilla, safe contract used as the negative for most token-smell patterns.
 CLEAN = ("contract Safe { uint256 private value; "

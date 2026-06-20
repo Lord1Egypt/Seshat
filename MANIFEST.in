@@ -1,0 +1,3 @@
+recursive-include src/seshat/catalog *.yaml
+include LICENSE README.md CLAUDE.md
+recursive-include docs *.md
