@@ -61,7 +61,7 @@ It is built for people who want to **own their data and their analysis**: audito
 - 🧪 **Honest, deduplicated findings** — flatten Standard-JSON (and Etherscan's `{{…}}`), drop bundled dependencies, strip comments/strings, dedup per `(pattern, line)`, and threshold by confidence — so the numbers mean something.
 - 🔁 **Scan diffing** — compare two scans of the same corpus: what's new, what's fixed, what regressed.
 - 📤 **Export everywhere** — JSON, CSV, **SARIF** (for VS Code / CI annotations), Markdown, and a self-contained offline **HTML report** you can open in any browser.
-- ⚡ **Optional Rust core** — a later phase adds a parallel Rust scanning engine for large corpora, keeping the Python front-end ergonomic.
+- ⚡ **Rust performance core** — a parallel Rust engine (`rust/`) reads the same patterns and produces **identical findings** ≈**6.4× faster** on large corpora; the zero-dependency Python engine stays the ergonomic default.
 
 ---
 
@@ -146,7 +146,7 @@ Seshat ships in eight focused phases. Full detail + acceptance criteria in **[RO
 | **6** | 📦 Distribution | PyPI · binaries · demo |
 | **7** | 🧠 Ecosystem | Plugins · IDE/SARIF · interop |
 
-**Current status:** 🎉 **v1.0** — Phases **0–4, 6, 7 shipped** (schema · ingestion · 103-pattern engine · query/diff/incremental · reporting · distribution · plugins/interop). Phase 5 (Rust perf core) is optional and the only deferred item.
+**Current status:** 🎉 **v1.0 — all 8 phases shipped** (0–7): schema · ingestion · 103-pattern engine · query/diff/incremental · reporting · ⚡ Rust core (≈6.4× faster, identical findings — [benchmark](docs/BENCHMARK.md)) · distribution · plugins/interop.
 
 ---
 

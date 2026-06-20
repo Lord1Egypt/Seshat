@@ -61,12 +61,12 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Pretty CLI triage view (`report --format table`; full curses TUI deferred — optional)
 - [x] Review-flag framing surfaced in every output
 
-## Phase 5 — ⚡ Rust Performance Core
-- [ ] Rust engine reading the same pattern format
-- [ ] Parity test: identical findings vs Python on baseline corpus
-- [ ] Parallel scanning + large-DB handling
-- [ ] Directory partitioning for big imports (80-char safety)
-- [ ] Benchmarks documented
+## Phase 5 — ⚡ Rust Performance Core ✅
+- [x] Rust engine reading the same pattern format (same YAML catalog, fancy-regex)
+- [x] Parity test: identical findings vs Python (fixtures + cross-engine + at scale)
+- [x] Parallel scanning (rayon) over file trees; large-corpus verified (10k)
+- [x] Directory walk skips dep/build dirs; 80-char identifier safety retained
+- [x] Benchmarks documented (≈6.4× on 10k contracts — docs/BENCHMARK.md)
 
 ## Phase 6 — 📦 Distribution
 - [x] PyPI package (`pipx install seshat-scanner`) — buildable wheel/sdist (publish = maintainer step)

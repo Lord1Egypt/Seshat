@@ -37,3 +37,22 @@ jobs:
         run: python -m pip install --upgrade ruff
       - name: Lint
         run: ruff check .
+
+  rust:
+    # Optional Rust performance core: build, parity (cargo test), and the
+    # cross-engine parity check against the Python engine.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build + parity tests (Rust)
+        working-directory: rust
+        run: |
+          cargo build --release
+          cargo test --release
+      - name: Cross-engine parity (Python ↔ Rust)
+        run: |
+          python -m pip install -e .
+          python -m unittest tests.test_rust_parity -v
