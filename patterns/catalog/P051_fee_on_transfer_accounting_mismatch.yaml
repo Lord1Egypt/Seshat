@@ -1,0 +1,18 @@
+id: P051
+name: 'Fee-On-Transfer Accounting Mismatch'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-682
+detectors:
+  - type: regex
+    pattern: 'function\s+_transfer[^}]*fee'
+    multiline: true
+    confidence: 0.4
+    description: 'Fee deducted inside _transfer can break balance accounting'
+tests:
+  positive:
+    - 'contract C { uint fee; function _transfer(address a, address b, uint v) internal { uint f = v * fee / 100; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,18 @@
+id: P109
+name: 'Unchecked transferFrom'
+severity: high
+category: ERC_STANDARDS
+confidence: 0.5
+swc: SWC-104
+cwe: CWE-252
+detectors:
+  - type: regex
+    pattern: '^\s*(?!.*require)[^=]*\.transferFrom\s*\('
+    confidence: 0.5
+    description: 'transferFrom return value ignored'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { IERC20(t).transferFrom(msg.sender, address(this), 1); } }'
+  negative:
+    - 'contract C { function f(address t) public { require(IERC20(t).transferFrom(msg.sender, address(this), 1)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

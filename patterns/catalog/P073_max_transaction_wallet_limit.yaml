@@ -1,0 +1,17 @@
+id: P073
+name: 'Max Transaction/Wallet Limit'
+severity: medium
+category: TOKEN_ECONOMICS
+confidence: 0.35
+swc: SWC-000
+cwe: CWE-840
+detectors:
+  - type: regex
+    pattern: '\b(maxTx\w*|maxWallet\w*)\b'
+    confidence: 0.35
+    description: 'Max transaction/wallet caps (rug-pull lever)'
+tests:
+  positive:
+    - 'contract C { uint maxTxAmount; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

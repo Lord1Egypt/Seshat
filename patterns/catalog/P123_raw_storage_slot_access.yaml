@@ -1,0 +1,18 @@
+id: P123
+name: 'Raw Storage Slot Access'
+severity: medium
+category: BYTECODE_LOWLEVEL
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-665
+detectors:
+  - type: regex
+    pattern: 'assembly[^}]*(sstore|sload)'
+    multiline: true
+    confidence: 0.4
+    description: 'Raw sstore/sload via assembly'
+tests:
+  positive:
+    - 'contract C { function f(uint v) public { assembly { sstore(0, v) } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,17 @@
+id: P121
+name: 'Inline Assembly Usage'
+severity: medium
+category: BYTECODE_LOWLEVEL
+confidence: 0.4
+swc: SWC-127
+cwe: CWE-695
+detectors:
+  - type: regex
+    pattern: 'assembly\s*\{'
+    confidence: 0.4
+    description: 'Inline assembly bypasses Solidity safety checks'
+tests:
+  positive:
+    - 'contract C { function f() public pure returns (uint x) { assembly { x := 1 } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

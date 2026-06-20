@@ -1,0 +1,21 @@
+id: P078
+name: 'ecrecover Zero-Address Unchecked'
+severity: high
+category: SIGNATURE_CRYPTO
+confidence: 0.55
+swc: SWC-122
+cwe: CWE-476
+detectors:
+  - type: regex
+    pattern: 'ecrecover\s*\('
+    forbids:
+      - 'address\(0\)'
+      - 'ECDSA'
+    confidence: 0.55
+    description: 'ecrecover result not checked against address(0)'
+tests:
+  positive:
+    - 'contract C { function f(bytes32 h, uint8 v, bytes32 r, bytes32 s) public { address a = ecrecover(h, v, r, s); _use(a); } }'
+  negative:
+    - 'contract C { function f(bytes32 h, uint8 v, bytes32 r, bytes32 s) public { address a = ecrecover(h, v, r, s); require(a != address(0)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

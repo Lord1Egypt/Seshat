@@ -1,0 +1,17 @@
+id: P017
+name: 'Arbitrary External Call'
+severity: critical
+category: EXTERNAL_CALLS
+confidence: 0.6
+swc: SWC-112
+cwe: CWE-749
+detectors:
+  - type: regex
+    pattern: '\.call\{[^}]*\}\s*\('
+    confidence: 0.6
+    description: 'Low-level call with value/gas to a runtime destination'
+tests:
+  positive:
+    - 'contract C { function f(address t, bytes calldata d) public { t.call{value: 0}(d); } }'
+  negative:
+    - 'contract C { function f() public { uint x = 1; } }'

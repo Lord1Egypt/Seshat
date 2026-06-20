@@ -1,0 +1,31 @@
+id: P174
+name: 'Unprotected burnFrom'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-284
+detectors:
+  - type: function_signature
+    pattern: 'function\s+burnFrom\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'allowance'
+      - '_spendAllowance'
+      - '_approve'
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.45
+    description: 'burnFrom without allowance/authorization'
+tests:
+  positive:
+    - 'contract C { function burnFrom(address a, uint v) public { _burn(a, v); } }'
+  negative:
+    - 'contract C { function burnFrom(address a, uint v) public { _spendAllowance(a, msg.sender, v); _burn(a, v); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

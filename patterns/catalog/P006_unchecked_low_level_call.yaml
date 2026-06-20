@@ -1,0 +1,18 @@
+id: P006
+name: 'Unchecked Low-Level Call'
+severity: high
+category: EXTERNAL_CALLS
+confidence: 0.6
+swc: SWC-104
+cwe: CWE-252
+detectors:
+  - type: regex
+    pattern: '^\s*[^=]*\.call\{'
+    confidence: 0.6
+    description: 'Return value of a low-level call is not checked'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { t.call{value: 1}(""); } }'
+  negative:
+    - 'contract C { function f(address t) public { (bool ok,)=t.call{value: 1}(""); require(ok); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

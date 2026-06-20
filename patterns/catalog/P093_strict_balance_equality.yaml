@@ -1,0 +1,17 @@
+id: P093
+name: 'Strict Balance Equality'
+severity: medium
+category: BUSINESS_LOGIC
+confidence: 0.45
+swc: SWC-132
+cwe: CWE-697
+detectors:
+  - type: regex
+    pattern: 'address\(this\)\.balance\s*==|==\s*address\(this\)\.balance'
+    confidence: 0.45
+    description: 'Strict equality on contract balance (forced-send breaks it)'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (bool) { return address(this).balance == 0; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

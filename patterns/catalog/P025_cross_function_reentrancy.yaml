@@ -1,0 +1,23 @@
+id: P025
+name: 'Cross-Function Reentrancy'
+severity: critical
+category: REENTRANCY
+confidence: 0.55
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\.call\{[^}]*value'
+    scope: function
+    requires:
+      - '\w+\[[^\]]*\]\s*[-+]?='
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.55
+    description: 'Value call alongside mapping state writes, no guard'
+tests:
+  positive:
+    - 'contract C { mapping(address=>uint) b; function withdraw() public { (bool ok,)=msg.sender.call{value:b[msg.sender]}(""); b[msg.sender]=0; } }'
+  negative:
+    - 'contract C { mapping(address=>uint) b; function withdraw() public nonReentrant { b[msg.sender]=0; (bool ok,)=msg.sender.call{value:1}(""); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

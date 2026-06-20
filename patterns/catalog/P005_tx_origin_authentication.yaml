@@ -1,0 +1,18 @@
+id: P005
+name: 'tx.origin Authentication'
+severity: high
+category: ACCESS_CONTROL
+confidence: 0.85
+swc: SWC-115
+cwe: CWE-477
+detectors:
+  - type: regex
+    pattern: '(require\s*\(\s*tx\.origin|tx\.origin\s*==|==\s*tx\.origin)'
+    confidence: 0.85
+    description: 'Authorization compared against tx.origin'
+tests:
+  positive:
+    - 'contract C { address owner; function f() public view { require(tx.origin == owner); } }'
+  negative:
+    - 'contract C { function f() public view { require(msg.sender != address(0)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

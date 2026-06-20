@@ -1,0 +1,17 @@
+id: P096
+name: 'Deprecated now Alias'
+severity: low
+category: BUSINESS_LOGIC
+confidence: 0.5
+swc: SWC-116
+cwe: CWE-477
+detectors:
+  - type: regex
+    pattern: '\bnow\b'
+    confidence: 0.5
+    description: 'Deprecated ''now'' alias for block.timestamp'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (uint) { return now; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

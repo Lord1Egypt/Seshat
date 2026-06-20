@@ -1,0 +1,26 @@
+id: P002
+name: 'Selfdestruct Anyone'
+severity: critical
+category: ACCESS_CONTROL
+confidence: 0.8
+swc: SWC-106
+cwe: CWE-284
+detectors:
+  - type: ast
+    pattern: 'selfdestruct\s*\('
+    scope: function
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.8
+    description: 'selfdestruct reachable without an access guard'
+tests:
+  positive:
+    - 'contract C { function kill() public { selfdestruct(payable(msg.sender)); } }'
+  negative:
+    - 'contract C { address owner; function kill() public onlyOwner { selfdestruct(payable(owner)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

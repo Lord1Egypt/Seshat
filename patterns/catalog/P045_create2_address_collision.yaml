@@ -1,0 +1,17 @@
+id: P045
+name: 'CREATE2 Address Collision'
+severity: high
+category: EXTERNAL_CALLS
+confidence: 0.5
+swc: SWC-000
+cwe: CWE-330
+detectors:
+  - type: regex
+    pattern: '(create2\s*\(|\{\s*salt\s*:)'
+    confidence: 0.5
+    description: 'CREATE2 deployment (address-reuse risk)'
+tests:
+  positive:
+    - 'contract C { function f(bytes32 s) public { new Foo{salt: s}(); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

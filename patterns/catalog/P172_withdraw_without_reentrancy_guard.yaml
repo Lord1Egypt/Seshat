@@ -1,0 +1,23 @@
+id: P172
+name: 'Withdraw Without Reentrancy Guard'
+severity: high
+category: REENTRANCY
+confidence: 0.5
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: function_signature
+    pattern: 'function\s+withdraw\w*\s*\('
+    scope: function
+    requires:
+      - '\.(call|transfer|send)\b'
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.5
+    description: 'withdraw moves funds without a reentrancy guard'
+tests:
+  positive:
+    - 'contract C { function withdraw() public { payable(msg.sender).transfer(1); } }'
+  negative:
+    - 'contract C { function withdraw() public nonReentrant { payable(msg.sender).transfer(1); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

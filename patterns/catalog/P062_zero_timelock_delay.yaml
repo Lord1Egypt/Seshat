@@ -1,0 +1,17 @@
+id: P062
+name: 'Zero Timelock Delay'
+severity: medium
+category: GOVERNANCE
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-840
+detectors:
+  - type: regex
+    pattern: '\b(minDelay|delay)\s*=\s*0\b'
+    confidence: 0.45
+    description: 'Timelock delay of zero'
+tests:
+  positive:
+    - 'contract C { uint minDelay = 0; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

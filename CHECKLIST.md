@@ -29,19 +29,19 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Content-addressed dedup (no duplicate rows on re-ingest)
 - [x] Tests for every importer + normalizer
 
-## Phase 2 — 🎯 Pattern Engine (100+)
-- [ ] Pattern YAML schema (id/name/severity/category/confidence/SWC/CWE/detectors)
-- [ ] Matcher: regex
-- [ ] Matcher: function-signature
-- [ ] Matcher: lightweight AST / structural
-- [ ] Matcher: semantic heuristic
-- [ ] Confidence threshold in core
-- [ ] Dedup per `(pattern, line)`
-- [ ] Pattern SDK + validator
-- [ ] Labeled fixture harness (TP + FP per pattern)
-- [ ] Migrate MaatEye's 50 patterns (with their fixes baked in)
-- [ ] Expand to 100+ (full SWC registry + DeFi classes)
-- [ ] Precision baseline: clean ERC-20 ⇒ 0 critical
+## Phase 2 — 🎯 Pattern Engine (100+) ✅
+- [x] Pattern YAML schema (id/name/severity/category/confidence/SWC/CWE/detectors)
+- [x] Matcher: regex
+- [x] Matcher: function-signature (brace-balanced function scope)
+- [x] Matcher: lightweight AST / structural (scope + requires/forbids)
+- [x] Matcher: semantic heuristic (requires/forbids composition)
+- [x] Confidence threshold in core
+- [x] Dedup per `(pattern, line)`
+- [x] Pattern SDK + validator (`seshat patterns --validate`)
+- [x] Labeled fixture harness (inline TP + FP per pattern)
+- [x] Migrate MaatEye's 50 patterns (with their fixes baked in)
+- [x] Expand to 100+ (103 patterns across all 12 categories)
+- [x] Precision baseline: clean ERC-20 ⇒ 0 critical
 
 ## Phase 3 — 🗄️ Local Database & Query
 - [ ] Persist scans + findings with history

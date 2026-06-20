@@ -1,0 +1,26 @@
+id: P022
+name: 'Role Admin Hijack'
+severity: critical
+category: ACCESS_CONTROL
+confidence: 0.6
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: ast
+    pattern: '_setRoleAdmin\s*\('
+    scope: function
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.6
+    description: '_setRoleAdmin reachable without a guard'
+tests:
+  positive:
+    - 'contract C { function pwn(bytes32 a, bytes32 b) public { _setRoleAdmin(a, b); } }'
+  negative:
+    - 'contract C { function pwn(bytes32 a, bytes32 b) public onlyOwner { _setRoleAdmin(a, b); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

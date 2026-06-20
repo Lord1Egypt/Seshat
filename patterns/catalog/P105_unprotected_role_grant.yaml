@@ -1,0 +1,29 @@
+id: P105
+name: 'Unprotected Role Grant'
+severity: high
+category: ACCESS_CONTROL
+confidence: 0.65
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: ast
+    pattern: 'grantRole\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+      - 'onlyRole'
+    confidence: 0.65
+    description: 'grantRole wrapper callable without a guard'
+tests:
+  positive:
+    - 'contract C { function giveRole(bytes32 r, address a) public { grantRole(r, a); } }'
+  negative:
+    - 'contract C { function giveRole(bytes32 r, address a) public onlyRole(bytes32(0)) { grantRole(r, a); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

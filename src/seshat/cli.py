@@ -11,9 +11,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from . import __version__, ingest
+from . import __version__, engine, ingest
+from . import patterns as patterns_mod
 from .db import init_db
 from .explorer import ExplorerError
+from .scan import run_scan
 from .store import IngestResult
 
 
@@ -100,6 +102,53 @@ def _cmd_ingest(args: argparse.Namespace) -> int:
     return _report(results, args.db)
 
 
+def _load_catalog(args: argparse.Namespace):
+    catalog = args.patterns or str(patterns_mod.default_catalog_dir())
+    return patterns_mod.load_patterns(catalog), catalog
+
+
+def _cmd_scan(args: argparse.Namespace) -> int:
+    pats, catalog = _load_catalog(args)
+    if not pats:
+        print(f"error: no patterns found in {catalog}", file=sys.stderr)
+        return 1
+    conn, _, _ = init_db(args.db)
+    try:
+        stats = run_scan(conn, pats, min_confidence=args.min_confidence)
+    finally:
+        conn.close()
+    sev = stats.by_severity
+    order = ("critical", "high", "medium", "low", "info")
+    breakdown = " · ".join(f"{s}:{sev.get(s, 0)}" for s in order if sev.get(s))
+    print(
+        f"🔍 scan #{stats.scan_id}: {stats.contracts_scanned} contracts, "
+        f"{len(pats)} patterns → {stats.findings} review flags"
+        + (f" ({breakdown})" if breakdown else "")
+    )
+    print("   ⚠️  flags are heuristic review pointers, not confirmed vulnerabilities.")
+    return 0
+
+
+def _cmd_patterns(args: argparse.Namespace) -> int:
+    pats, catalog = _load_catalog(args)
+    if args.validate:
+        problems: list[str] = []
+        for p in pats:
+            problems.extend(patterns_mod.validate_pattern(p))
+            problems.extend(engine.check_pattern_fixtures(p))
+        if problems:
+            print(f"❌ {len(problems)} problem(s) in {len(pats)} patterns:", file=sys.stderr)
+            for prob in problems:
+                print(f"   - {prob}", file=sys.stderr)
+            return 1
+        print(f"✅ {len(pats)} patterns valid — all fixtures pass ({catalog})")
+        return 0
+    print(f"📋 {len(pats)} patterns ({catalog}):")
+    for p in pats:
+        print(f"   {p.id}  {p.severity:<8} {p.category:<18} {p.name}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="seshat",
@@ -147,6 +196,23 @@ def build_parser() -> argparse.ArgumentParser:
         "--force", action="store_true", help="re-fetch even if cached (--address)"
     )
     p_ing.set_defaults(func=_cmd_ingest)
+
+    p_scan = sub.add_parser("scan", help="run the pattern engine over the archive")
+    p_scan.add_argument("--db", default="seshat.db", help="archive path")
+    p_scan.add_argument("--patterns", help="pattern catalog dir (default: bundled)")
+    p_scan.add_argument(
+        "--min-confidence", type=float, default=0.0,
+        help="drop detectors below this confidence (default: 0.0)",
+    )
+    p_scan.set_defaults(func=_cmd_scan)
+
+    p_pat = sub.add_parser("patterns", help="list or validate the pattern catalog")
+    p_pat.add_argument("--patterns", help="pattern catalog dir (default: bundled)")
+    p_pat.add_argument(
+        "--validate", action="store_true",
+        help="validate every pattern and run its fixtures (non-zero exit on failure)",
+    )
+    p_pat.set_defaults(func=_cmd_patterns)
 
     return parser
 

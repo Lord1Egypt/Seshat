@@ -1,0 +1,22 @@
+id: P023
+name: 'Ownership Transfer Without Two-Step'
+severity: high
+category: ACCESS_CONTROL
+confidence: 0.5
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: regex
+    pattern: 'function\s+transferOwnership\b'
+    forbids:
+      - 'pendingOwner'
+      - 'acceptOwnership'
+      - 'Ownable2Step'
+    confidence: 0.5
+    description: 'One-step ownership transfer (no pending/accept)'
+tests:
+  positive:
+    - 'contract C { address owner; function transferOwnership(address n) public onlyOwner { owner=n; } }'
+  negative:
+    - 'contract C { address owner; address pendingOwner; function transferOwnership(address n) public onlyOwner { pendingOwner=n; } function acceptOwnership() public { } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

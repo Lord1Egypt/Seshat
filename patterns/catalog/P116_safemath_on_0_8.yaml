@@ -1,0 +1,17 @@
+id: P116
+name: 'SafeMath On 0.8+'
+severity: low
+category: ERC_STANDARDS
+confidence: 0.4
+swc: SWC-101
+cwe: CWE-1041
+detectors:
+  - type: regex
+    pattern: 'using\s+SafeMath'
+    confidence: 0.4
+    description: 'Redundant SafeMath on a checked compiler'
+tests:
+  positive:
+    - 'contract C { using SafeMath for uint256; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

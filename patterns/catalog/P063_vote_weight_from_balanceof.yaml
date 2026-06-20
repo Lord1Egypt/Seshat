@@ -1,0 +1,19 @@
+id: P063
+name: 'Vote Weight From balanceOf'
+severity: high
+category: GOVERNANCE
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: 'balanceOf\s*\('
+    requires:
+      - '\b(vote|Vote)\b'
+    confidence: 0.45
+    description: 'Voting power derived from spot balanceOf (manipulable)'
+tests:
+  positive:
+    - 'contract C { function vote() public { uint w = token.balanceOf(msg.sender); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

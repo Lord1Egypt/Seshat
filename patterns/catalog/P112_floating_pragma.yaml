@@ -1,0 +1,18 @@
+id: P112
+name: 'Floating Pragma'
+severity: medium
+category: ERC_STANDARDS
+confidence: 0.5
+swc: SWC-103
+cwe: CWE-1104
+detectors:
+  - type: regex
+    pattern: 'pragma\s+solidity\s+\^'
+    confidence: 0.5
+    description: 'Floating pragma (^) — pin the compiler'
+tests:
+  positive:
+    - 'pragma solidity ^0.8.0; contract C { }'
+  negative:
+    - 'pragma solidity 0.8.20; contract C { }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

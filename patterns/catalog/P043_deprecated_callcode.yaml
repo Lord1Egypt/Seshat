@@ -1,0 +1,17 @@
+id: P043
+name: 'Deprecated callcode'
+severity: critical
+category: EXTERNAL_CALLS
+confidence: 0.7
+swc: SWC-111
+cwe: CWE-477
+detectors:
+  - type: regex
+    pattern: '\.callcode\s*\('
+    confidence: 0.7
+    description: 'Deprecated callcode opcode'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { t.callcode(""); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

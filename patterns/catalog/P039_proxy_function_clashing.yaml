@@ -1,0 +1,18 @@
+id: P039
+name: 'Proxy Function Clashing'
+severity: high
+category: PROXY_UPGRADEABLE
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-710
+detectors:
+  - type: regex
+    pattern: 'fallback\s*\(\s*\)\s*external[^{]*\{[^}]*delegatecall'
+    multiline: true
+    confidence: 0.45
+    description: 'Proxy fallback delegatecall can clash with implementation selectors'
+tests:
+  positive:
+    - 'contract C { fallback() external payable { address t; assembly { let r := delegatecall(gas(), t, 0, 0, 0, 0) } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

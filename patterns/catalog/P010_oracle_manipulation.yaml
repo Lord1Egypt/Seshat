@@ -1,0 +1,21 @@
+id: P010
+name: 'Oracle Manipulation'
+severity: critical
+category: TOKEN_ECONOMICS
+confidence: 0.55
+swc: SWC-000
+cwe: CWE-345
+detectors:
+  - type: regex
+    pattern: '(getReserves|latestAnswer)\s*\('
+    forbids:
+      - 'getPastVotes'
+      - 'TWAP'
+      - 'consult'
+    confidence: 0.55
+    description: 'Spot price/reserves used without a TWAP'
+tests:
+  positive:
+    - 'contract C { function p(address pair) public view returns (uint) { (uint r0, uint r1,) = IPair(pair).getReserves(); return r0 / r1; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

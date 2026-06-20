@@ -1,0 +1,17 @@
+id: P085
+name: 'Blockhash / prevrandao Randomness'
+severity: high
+category: TIME_RANDOMNESS
+confidence: 0.6
+swc: SWC-120
+cwe: CWE-330
+detectors:
+  - type: regex
+    pattern: '(blockhash\s*\(|block\.difficulty|block\.prevrandao)'
+    confidence: 0.6
+    description: 'Weak randomness from block attributes'
+tests:
+  positive:
+    - 'contract C { function r() public view returns (uint) { return uint(blockhash(block.number - 1)); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,17 @@
+id: P089
+name: 'block.coinbase Dependence'
+severity: medium
+category: TIME_RANDOMNESS
+confidence: 0.4
+swc: SWC-120
+cwe: CWE-330
+detectors:
+  - type: regex
+    pattern: 'block\.coinbase'
+    confidence: 0.4
+    description: 'Logic depends on block.coinbase (miner-influenced)'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (address) { return block.coinbase; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

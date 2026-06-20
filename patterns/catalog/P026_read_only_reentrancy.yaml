@@ -1,0 +1,18 @@
+id: P026
+name: 'Read-Only Reentrancy'
+severity: high
+category: REENTRANCY
+confidence: 0.45
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: 'view[^{;]*\{[^}]*address\(this\)\.balance'
+    multiline: true
+    confidence: 0.45
+    description: 'View price/accounting derived from live balance (read-only reentrancy)'
+tests:
+  positive:
+    - 'contract C { function price() external view returns (uint) { return address(this).balance / 1; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

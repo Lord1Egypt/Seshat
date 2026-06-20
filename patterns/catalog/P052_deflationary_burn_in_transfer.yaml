@@ -1,0 +1,18 @@
+id: P052
+name: 'Deflationary Burn In Transfer'
+severity: medium
+category: TOKEN_ECONOMICS
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-682
+detectors:
+  - type: regex
+    pattern: 'function\s+_transfer[^}]*_burn'
+    multiline: true
+    confidence: 0.4
+    description: '_burn inside _transfer changes received amount'
+tests:
+  positive:
+    - 'contract C { function _transfer(address a, address b, uint v) internal { _burn(a, v / 100); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

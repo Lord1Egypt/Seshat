@@ -1,0 +1,22 @@
+id: P079
+name: 'Missing chainId In Signature'
+severity: medium
+category: SIGNATURE_CRYPTO
+confidence: 0.4
+swc: SWC-121
+cwe: CWE-294
+detectors:
+  - type: regex
+    pattern: 'ecrecover\s*\('
+    forbids:
+      - 'chainid'
+      - 'DOMAIN_SEPARATOR'
+      - 'block.chainid'
+    confidence: 0.4
+    description: 'Signed data without chainId binding (cross-chain replay)'
+tests:
+  positive:
+    - 'contract C { function f(bytes32 h, uint8 v, bytes32 r, bytes32 s) public { address a = ecrecover(h, v, r, s); } }'
+  negative:
+    - 'contract C { function f(bytes32 h, uint8 v, bytes32 r, bytes32 s) public { uint id = block.chainid; address a = ecrecover(h, v, r, s); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

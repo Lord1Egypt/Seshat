@@ -1,0 +1,21 @@
+id: P028
+name: 'ERC721 Callback Reentrancy'
+severity: critical
+category: REENTRANCY
+confidence: 0.45
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\bsafeTransferFrom\s*\('
+    scope: function
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.45
+    description: 'safeTransferFrom triggers onERC721Received callback without a guard'
+tests:
+  positive:
+    - 'contract C { function buy(address n, uint id) public { I(n).safeTransferFrom(address(this), msg.sender, id); } }'
+  negative:
+    - 'contract C { function buy(address n, uint id) public nonReentrant { I(n).safeTransferFrom(address(this), msg.sender, id); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,17 @@
+id: P155
+name: 'block.gaslimit Dependence'
+severity: low
+category: BYTECODE_LOWLEVEL
+confidence: 0.35
+swc: SWC-000
+cwe: CWE-691
+detectors:
+  - type: regex
+    pattern: 'block\.gaslimit'
+    confidence: 0.35
+    description: 'Logic depends on block.gaslimit'
+tests:
+  positive:
+    - 'contract C { function f() public view returns (uint) { return block.gaslimit; } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,18 @@
+id: P087
+name: 'Weak PRNG From Block Data'
+severity: high
+category: TIME_RANDOMNESS
+confidence: 0.6
+swc: SWC-120
+cwe: CWE-330
+detectors:
+  - type: regex
+    pattern: 'keccak256\([^)]*block\.(timestamp|number|difficulty|prevrandao)'
+    multiline: true
+    confidence: 0.6
+    description: 'PRNG seeded from predictable block data'
+tests:
+  positive:
+    - 'contract C { function r() public view returns (uint) { return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

@@ -1,0 +1,18 @@
+id: P019
+name: 'No SafeERC20 (transfer)'
+severity: medium
+category: ERC_STANDARDS
+confidence: 0.45
+swc: SWC-104
+cwe: CWE-252
+detectors:
+  - type: regex
+    pattern: '^\s*(?!.*require)[^=]*\.transfer\s*\(\s*[^,)]+,[^)]*\)\s*;'
+    confidence: 0.45
+    description: 'ERC-20 transfer return value ignored (use SafeERC20)'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { IERC20(t).transfer(msg.sender, 1); } }'
+  negative:
+    - 'contract C { function f(address t) public { require(IERC20(t).transfer(msg.sender, 1)); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

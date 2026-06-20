@@ -1,0 +1,17 @@
+id: P066
+name: 'Unsafe Downcast'
+severity: medium
+category: ARITHMETIC
+confidence: 0.4
+swc: SWC-101
+cwe: CWE-197
+detectors:
+  - type: regex
+    pattern: '\buint(8|16|32|64|128)\s*\('
+    confidence: 0.4
+    description: 'Narrowing cast can silently truncate'
+tests:
+  positive:
+    - 'contract C { function f(uint x) public pure returns (uint8) { return uint8(x); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

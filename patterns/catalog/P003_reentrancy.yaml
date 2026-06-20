@@ -1,0 +1,21 @@
+id: P003
+name: 'Reentrancy'
+severity: critical
+category: REENTRANCY
+confidence: 0.6
+swc: SWC-107
+cwe: CWE-841
+detectors:
+  - type: ast
+    pattern: '\.call\{[^}]*value'
+    scope: function
+    forbids:
+      - 'nonReentrant'
+    confidence: 0.6
+    description: 'Value-sending low-level call without a reentrancy guard'
+tests:
+  positive:
+    - 'contract C { mapping(address=>uint) bal; function withdraw() public { uint a=bal[msg.sender]; (bool ok,)=msg.sender.call{value:a}(""); bal[msg.sender]=0; } }'
+  negative:
+    - 'contract C { mapping(address=>uint) bal; function withdraw() public nonReentrant { uint a=bal[msg.sender]; bal[msg.sender]=0; (bool ok,)=msg.sender.call{value:a}(""); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

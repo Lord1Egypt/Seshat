@@ -1,0 +1,31 @@
+id: P021
+name: 'Unprotected Initializer'
+severity: critical
+category: ACCESS_CONTROL
+confidence: 0.75
+swc: SWC-118
+cwe: CWE-665
+detectors:
+  - type: function_signature
+    pattern: 'function\s+initialize\w*\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'initializer'
+      - 'onlyInitializing'
+      - '_disableInitializers'
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.75
+    description: 'initialize() callable by anyone'
+tests:
+  positive:
+    - 'contract C { address owner; function initialize(address o) public { owner=o; } }'
+  negative:
+    - 'contract C { address owner; function initialize(address o) public initializer { owner=o; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

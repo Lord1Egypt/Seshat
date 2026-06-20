@@ -1,0 +1,18 @@
+id: P108
+name: 'Unchecked send()'
+severity: high
+category: EXTERNAL_CALLS
+confidence: 0.6
+swc: SWC-104
+cwe: CWE-252
+detectors:
+  - type: regex
+    pattern: '^\s*[^=]*\.send\s*\('
+    confidence: 0.6
+    description: 'Return value of send() not checked'
+tests:
+  positive:
+    - 'contract C { function f(address payable t) public { t.send(1); } }'
+  negative:
+    - 'contract C { function f(address payable t) public { bool ok=t.send(1); require(ok); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

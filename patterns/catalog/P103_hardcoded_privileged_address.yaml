@@ -1,0 +1,17 @@
+id: P103
+name: 'Hardcoded Privileged Address'
+severity: medium
+category: ACCESS_CONTROL
+confidence: 0.5
+swc: SWC-105
+cwe: CWE-798
+detectors:
+  - type: regex
+    pattern: 'address\s+(public\s+|private\s+|internal\s+|constant\s+)*\w*(owner|admin|treasury|deployer)\w*\s*=\s*0x[0-9a-fA-F]{40}'
+    confidence: 0.5
+    description: 'Privileged role hardcoded to a literal address'
+tests:
+  positive:
+    - 'contract C { address owner = 0x1111111111111111111111111111111111111111; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

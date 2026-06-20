@@ -1,0 +1,28 @@
+id: P178
+name: 'Unprotected Pause'
+severity: medium
+category: GOVERNANCE
+confidence: 0.5
+swc: SWC-105
+cwe: CWE-284
+detectors:
+  - type: function_signature
+    pattern: 'function\s+pause\s*\('
+    scope: function
+    requires:
+      - '\b(public|external)\b'
+    forbids:
+      - 'only[A-Za-z]\w*'
+      - 'hasRole'
+      - '_checkRole'
+      - '_checkOwner'
+      - 'require\s*\(\s*msg\.sender'
+      - 'msg\.sender\s*==\s*owner'
+    confidence: 0.5
+    description: 'pause() without a guard'
+tests:
+  positive:
+    - 'contract C { bool p; function pause() public { p = true; } }'
+  negative:
+    - 'contract C { bool p; function pause() public onlyOwner { p = true; } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

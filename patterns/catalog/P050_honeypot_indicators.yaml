@@ -1,0 +1,17 @@
+id: P050
+name: 'Honeypot Indicators'
+severity: high
+category: TOKEN_ECONOMICS
+confidence: 0.45
+swc: SWC-000
+cwe: CWE-840
+detectors:
+  - type: regex
+    pattern: '(blacklist|tradingEnabled|canTransfer\s*=\s*false|_isExcludedFromSell)'
+    confidence: 0.45
+    description: 'Transfer-restriction toggles typical of honeypots'
+tests:
+  positive:
+    - 'contract C { mapping(address=>bool) blacklist; }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

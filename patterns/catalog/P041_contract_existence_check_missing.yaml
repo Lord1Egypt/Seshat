@@ -1,0 +1,22 @@
+id: P041
+name: 'Contract Existence Check Missing'
+severity: high
+category: EXTERNAL_CALLS
+confidence: 0.4
+swc: SWC-104
+cwe: CWE-252
+detectors:
+  - type: regex
+    pattern: '\.call\{'
+    forbids:
+      - 'extcodesize'
+      - 'code\.length'
+      - 'isContract'
+    confidence: 0.4
+    description: 'Low-level call without verifying the target is a contract'
+tests:
+  positive:
+    - 'contract C { function f(address t) public { t.call{value:1}(""); } }'
+  negative:
+    - 'contract C { function f(address t) public { require(t.code.length > 0); t.call{value:1}(""); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

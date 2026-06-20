@@ -1,0 +1,17 @@
+id: P013
+name: 'Governance Vote Entry'
+severity: high
+category: GOVERNANCE
+confidence: 0.4
+swc: SWC-000
+cwe: CWE-284
+detectors:
+  - type: regex
+    pattern: 'function\s+castVote\w*\s*\('
+    confidence: 0.4
+    description: 'On-chain voting entrypoint'
+tests:
+  positive:
+    - 'contract C { function castVote(uint id, uint8 s) public { } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

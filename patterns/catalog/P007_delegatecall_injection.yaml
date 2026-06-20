@@ -1,0 +1,17 @@
+id: P007
+name: 'Delegatecall Injection'
+severity: critical
+category: EXTERNAL_CALLS
+confidence: 0.7
+swc: SWC-112
+cwe: CWE-829
+detectors:
+  - type: regex
+    pattern: '\.delegatecall\s*\('
+    confidence: 0.7
+    description: 'delegatecall to a runtime-supplied target'
+tests:
+  positive:
+    - 'contract C { function f(address t, bytes calldata d) public { t.delegatecall(d); } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

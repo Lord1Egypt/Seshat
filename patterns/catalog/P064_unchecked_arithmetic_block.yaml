@@ -1,0 +1,17 @@
+id: P064
+name: 'Unchecked Arithmetic Block'
+severity: high
+category: ARITHMETIC
+confidence: 0.5
+swc: SWC-101
+cwe: CWE-190
+detectors:
+  - type: regex
+    pattern: 'unchecked\s*\{'
+    confidence: 0.5
+    description: 'Explicit unchecked arithmetic block'
+tests:
+  positive:
+    - 'contract C { function f(uint a) public pure returns (uint) { unchecked { return a + 1; } } }'
+  negative:
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'

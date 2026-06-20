@@ -1,0 +1,22 @@
+id: P060
+name: 'Flash Loan Governance Takeover'
+severity: critical
+category: GOVERNANCE
+confidence: 0.5
+swc: SWC-000
+cwe: CWE-841
+detectors:
+  - type: regex
+    pattern: '(castVote|propose)\s*\('
+    forbids:
+      - 'getPastVotes'
+      - 'getPastTotalSupply'
+      - 'snapshot'
+    confidence: 0.5
+    description: 'Voting power read live (no snapshot) — flash-loan takeover risk'
+tests:
+  positive:
+    - 'contract C { function propose() public { } function vote() public { uint w = token.getVotes(msg.sender); } function castVote() public { } }'
+  negative:
+    - 'contract C { function castVote(uint id) public { uint w = token.getPastVotes(msg.sender, block.number - 1); } }'
+    - 'contract Safe { uint256 private value; function getValue() external view returns (uint256) { return value; } }'
