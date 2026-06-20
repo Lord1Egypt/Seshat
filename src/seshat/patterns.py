@@ -183,6 +183,53 @@ def validate_pattern(pat: Pattern) -> list[str]:
     return errs
 
 
+def default_plugin_dirs() -> list[Path]:
+    """User plugin directories, auto-loaded if present.
+
+    ``$SESHAT_PLUGINS`` (os.pathsep-separated) takes precedence; otherwise the
+    XDG config dir ``~/.config/seshat/patterns``. Drop a ``*.yaml`` pattern here
+    and Seshat picks it up — no core changes needed.
+    """
+    env = os.environ.get("SESHAT_PLUGINS")
+    if env:
+        return [Path(p) for p in env.split(os.pathsep) if p]
+    return [Path.home() / ".config" / "seshat" / "patterns"]
+
+
+def load_catalog(
+    extra_dirs: list[str | Path] | None = None,
+    *,
+    base_dir: str | Path | None = None,
+    include_plugins: bool = True,
+) -> list[Pattern]:
+    """Load the catalog plus any plugin/extra directories, merged.
+
+    ``base_dir`` overrides the bundled catalog entirely (the ``--patterns`` flag).
+    ``extra_dirs`` and the user plugin dirs are loaded *in addition*. A duplicate
+    pattern id across directories is an error (no silent shadowing).
+    """
+    dirs: list[Path] = [Path(base_dir) if base_dir else default_catalog_dir()]
+    if include_plugins:
+        dirs += default_plugin_dirs()
+    dirs += [Path(d) for d in (extra_dirs or [])]
+
+    patterns: list[Pattern] = []
+    origin: dict[str, str] = {}
+    for d in dirs:
+        if not Path(d).is_dir():
+            continue
+        for pat in load_patterns(d):
+            if pat.id in origin:
+                raise PatternError(
+                    f"duplicate pattern id {pat.id}: {origin[pat.id]} and "
+                    f"{pat.source_path}"
+                )
+            origin[pat.id] = pat.source_path or str(d)
+            patterns.append(pat)
+    patterns.sort(key=lambda p: p.id)
+    return patterns
+
+
 def default_catalog_dir() -> Path:
     """Locate the bundled pattern catalog.
 
