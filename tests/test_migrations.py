@@ -14,6 +14,7 @@ EXPECTED_TABLES = {
     "patterns",
     "scans",
     "findings",
+    "scan_contracts",
 }
 
 

@@ -88,6 +88,18 @@ chains ──< contracts ──< sources
 
 *Unique (dedup):* `(scan_id, contract_id, pattern_id, line)`.
 
+### `scan_contracts` (migration 0002)
+Per-scan provenance — which contracts a scan covered and the source hash at that time. Powers **incremental re-scan** (skip unchanged contracts) and the "touched zero contracts" guarantee.
+
+| column | type | notes |
+|---|---|---|
+| `scan_id` | INTEGER FK→scans | |
+| `contract_id` | INTEGER FK→contracts | |
+| `source_hash` | TEXT | normalized source hash at scan time |
+| `rescanned` | INTEGER | 1 = engine re-ran, 0 = findings copied forward |
+
+*Primary key:* `(scan_id, contract_id)`.
+
 ### `schema_version`
 | column | type | notes |
 |---|---|---|

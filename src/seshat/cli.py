@@ -8,12 +8,16 @@ arguments are supplied (so automation and CI never hang).
 from __future__ import annotations
 
 import argparse
+import re
+import sqlite3
 import sys
 from pathlib import Path
 
 from . import __version__, engine, ingest
 from . import patterns as patterns_mod
+from . import query as query_mod
 from .db import init_db
+from .diff import diff_scans
 from .explorer import ExplorerError
 from .scan import run_scan
 from .store import IngestResult
@@ -114,7 +118,9 @@ def _cmd_scan(args: argparse.Namespace) -> int:
         return 1
     conn, _, _ = init_db(args.db)
     try:
-        stats = run_scan(conn, pats, min_confidence=args.min_confidence)
+        stats = run_scan(
+            conn, pats, min_confidence=args.min_confidence, incremental=args.incremental
+        )
     finally:
         conn.close()
     sev = stats.by_severity
@@ -125,7 +131,98 @@ def _cmd_scan(args: argparse.Namespace) -> int:
         f"{len(pats)} patterns → {stats.findings} review flags"
         + (f" ({breakdown})" if breakdown else "")
     )
+    if args.incremental:
+        print(f"   ♻️  incremental: {stats.rescanned} re-scanned, {stats.reused} reused")
     print("   ⚠️  flags are heuristic review pointers, not confirmed vulnerabilities.")
+    return 0
+
+
+def _print_rows(rows) -> None:
+    if not rows:
+        print("(no rows)")
+        return
+    cols = list(rows[0].keys())
+    widths = [len(c) for c in cols]
+    data = [[("" if r[c] is None else str(r[c])) for c in cols] for r in rows]
+    for row in data:
+        for i, cell in enumerate(row):
+            widths[i] = max(widths[i], len(cell))
+    print("  ".join(c.ljust(widths[i]) for i, c in enumerate(cols)))
+    print("  ".join("-" * widths[i] for i in range(len(cols))))
+    for row in data:
+        print("  ".join(cell.ljust(widths[i]) for i, cell in enumerate(row)))
+    print(f"({len(rows)} row{'s' if len(rows) != 1 else ''})")
+
+
+def _cmd_query(args: argparse.Namespace) -> int:
+    if args.list:
+        print("canned queries: " + ", ".join(sorted(query_mod.CANNED)))
+        return 0
+    if not (args.sql or args.canned):
+        print("error: provide SQL, --canned NAME, or --list", file=sys.stderr)
+        return 2
+    try:
+        conn = query_mod.connect_ro(args.db)
+    except sqlite3.OperationalError as exc:
+        print(f"error: cannot open {args.db}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        if args.canned:
+            rows = query_mod.run_canned(conn, args.canned, scan=args.scan)
+        else:
+            rows = query_mod.run_sql(conn, args.sql)
+    except (sqlite3.Error, KeyError) as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 1
+    finally:
+        conn.close()
+    _print_rows(rows)
+    return 0
+
+
+def _cmd_search(args: argparse.Namespace) -> int:
+    try:
+        conn = query_mod.connect_ro(args.db)
+    except sqlite3.OperationalError as exc:
+        print(f"error: cannot open {args.db}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        hits = query_mod.search_source(
+            conn, args.term, regex=args.regex, kind=args.kind, limit=args.limit
+        )
+    except re.error as exc:
+        print(f"error: bad regex: {exc}", file=sys.stderr)
+        return 1
+    finally:
+        conn.close()
+    if not hits:
+        print("(no matches)")
+        return 0
+    for h in hits:
+        loc = f"{h.chain_key or '(local)'}#{h.contract_id}"
+        print(f"{loc:<18} L{h.line:<5} {h.text}")
+    print(f"({len(hits)} match{'es' if len(hits) != 1 else ''})")
+    return 0
+
+
+def _cmd_diff(args: argparse.Namespace) -> int:
+    try:
+        conn = query_mod.connect_ro(args.db)
+    except sqlite3.OperationalError as exc:
+        print(f"error: cannot open {args.db}: {exc}", file=sys.stderr)
+        return 1
+    try:
+        result = diff_scans(conn, args.scan_a, args.scan_b)
+    finally:
+        conn.close()
+    print(f"⚖️  diff scan #{result.scan_a} → #{result.scan_b}")
+    print(f"   🆕 new: {len(result.new)}   ✅ fixed: {len(result.fixed)}   "
+          f"🔁 regressed: {len(result.regressed)}")
+    if args.verbose:
+        for label, items in (("new", result.new), ("fixed", result.fixed),
+                             ("regressed", result.regressed)):
+            for contract_id, pattern_id, line in items:
+                print(f"   [{label}] contract#{contract_id} {pattern_id} L{line}")
     return 0
 
 
@@ -204,7 +301,35 @@ def build_parser() -> argparse.ArgumentParser:
         "--min-confidence", type=float, default=0.0,
         help="drop detectors below this confidence (default: 0.0)",
     )
+    p_scan.add_argument(
+        "--incremental", action="store_true",
+        help="reuse results for contracts unchanged since the last scan",
+    )
     p_scan.set_defaults(func=_cmd_scan)
+
+    p_q = sub.add_parser("query", help="run raw SQL or a canned query (read-only)")
+    p_q.add_argument("sql", nargs="?", help="a SELECT statement")
+    p_q.add_argument("--db", default="seshat.db", help="archive path")
+    p_q.add_argument("--canned", help="a named query (see --list)")
+    p_q.add_argument("--scan", type=int, help="scan id for canned queries (default: latest)")
+    p_q.add_argument("--list", action="store_true", help="list canned queries")
+    p_q.set_defaults(func=_cmd_query)
+
+    p_s = sub.add_parser("search", help="full-text search over stored source")
+    p_s.add_argument("term", help="substring (or regex with --regex)")
+    p_s.add_argument("--db", default="seshat.db", help="archive path")
+    p_s.add_argument("--regex", action="store_true", help="treat term as a regex")
+    p_s.add_argument("--kind", default="normalized",
+                     choices=["normalized", "raw", "all"], help="source kind to search")
+    p_s.add_argument("--limit", type=int, default=100, help="max hits (default: 100)")
+    p_s.set_defaults(func=_cmd_search)
+
+    p_d = sub.add_parser("diff", help="diff two scans (new / fixed / regressed)")
+    p_d.add_argument("scan_a", type=int, help="baseline scan id")
+    p_d.add_argument("scan_b", type=int, help="comparison scan id")
+    p_d.add_argument("--db", default="seshat.db", help="archive path")
+    p_d.add_argument("-v", "--verbose", action="store_true", help="list each finding")
+    p_d.set_defaults(func=_cmd_diff)
 
     p_pat = sub.add_parser("patterns", help="list or validate the pattern catalog")
     p_pat.add_argument("--patterns", help="pattern catalog dir (default: bundled)")
