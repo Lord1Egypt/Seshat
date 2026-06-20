@@ -43,14 +43,14 @@ Per-phase, task-level tracking. Check items off as they land. Each phase must be
 - [x] Expand to 100+ (103 patterns across all 12 categories)
 - [x] Precision baseline: clean ERC-20 ⇒ 0 critical
 
-## Phase 3 — 🗄️ Local Database & Query
-- [ ] Persist scans + findings with history
-- [ ] `seshat query` (raw SQL)
-- [ ] Canned queries (top patterns, by severity, by chain)
-- [ ] Full-text search over source
-- [ ] `seshat diff A B` (new / fixed / regressed)
-- [ ] Incremental re-scan (only changed contracts)
-- [ ] Tests for query, diff, incremental
+## Phase 3 — 🗄️ Local Database & Query ✅
+- [x] Persist scans + findings with history
+- [x] `seshat query` (raw SQL, read-only)
+- [x] Canned queries (top patterns, by severity, by chain, by category, flagged, critical)
+- [x] Full-text search over source (`seshat search`, substring + regex)
+- [x] `seshat diff A B` (new / fixed / regressed)
+- [x] Incremental re-scan (only changed contracts; no-op touches zero)
+- [x] Tests for query, diff, incremental
 
 ## Phase 4 — 📤 Reporting & UX
 - [ ] Exporter: JSON

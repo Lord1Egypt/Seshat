@@ -91,9 +91,25 @@ CREATE INDEX ix_findings_pattern  ON findings(pattern_id);
 """
 
 
+_M0002_SCAN_CONTRACTS = """
+-- Per-scan provenance: which contracts a scan covered, the source hash at that
+-- time, and whether the engine actually re-ran (vs. copied forward). Enables
+-- incremental re-scan and the "touched zero contracts" guarantee.
+CREATE TABLE scan_contracts (
+    scan_id     INTEGER NOT NULL REFERENCES scans(id),
+    contract_id INTEGER NOT NULL REFERENCES contracts(id),
+    source_hash TEXT,
+    rescanned   INTEGER NOT NULL DEFAULT 1,
+    PRIMARY KEY (scan_id, contract_id)
+);
+CREATE INDEX ix_scan_contracts_contract ON scan_contracts(contract_id);
+"""
+
+
 # Append-only. Add new migrations below with the next version number.
 MIGRATIONS: tuple[Migration, ...] = (
     Migration(1, "initial_schema", _M0001_INITIAL),
+    Migration(2, "scan_contracts", _M0002_SCAN_CONTRACTS),
 )
 
 
