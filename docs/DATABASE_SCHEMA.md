@@ -1,6 +1,6 @@
 # 🗄️ Seshat — Database Schema (draft v1)
 
-The local archive is a single SQLite file, `seshat.db`. This is the **proposed** schema; it will be finalized in Phase 0 and evolved via migrations (every change ships with a migration + test).
+The local archive is a single SQLite file, `seshat.db`. This schema was **finalized in Phase 0** (migration `0001_initial_schema`) and is evolved via migrations (every change ships with a migration + test).
 
 ## Overview
 
@@ -37,7 +37,9 @@ chains ──< contracts ──< sources
 | `first_seen` | TEXT | ISO timestamp |
 | `origin` | TEXT | `local` / `foundry` / `explorer` / `maateye` / … |
 
-*Unique:* `(chain_key, address)` and `source_hash`.
+*Unique:* `(chain_key, address)` — the hard dedup key for on-chain contracts. NULLs are distinct in SQLite, so any number of local-only files (`chain_key`/`address` NULL) coexist.
+
+> **Phase 0 finalize note:** `source_hash` is a **non-unique index**, *not* a global unique constraint. The same source legitimately deploys to many chains (e.g. USDC on Ethereum and Polygon); a global `UNIQUE(source_hash)` would reject the second one. Re-ingest dedup uses `source_hash` for lookup *within* `(chain, address)` scope (Phase 1).
 
 ### `sources`
 | column | type | notes |
